@@ -4,9 +4,14 @@
 
 main()
 {
-    int a;
-    if (a == 0)
-        a = a + 1;
+    {
+        int a;
+        int b;
+    }
+    {
+        int b;
+        int a;
+    }
 }
 
 // Test for comment_l

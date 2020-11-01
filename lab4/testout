@@ -2,19 +2,20 @@ MAIN    main
 LPARENTHESES       (
 RPARENTHESES       )
 LBRACE       {
+LBRACE       {
 TYPE     int
-ID       a
+ID       a       (main, 1): 0
 SEMICOLON       ;
-IF      if
-LPARENTHESES       (
-ID       a
-EQUAL      ==
-NUMBER_O       0       0
-RPARENTHESES       )
-ID       a
-ASSIGN       =
-ID       a
-PLUS       +
-NUMBER_D       1       1
+TYPE     int
+ID       b       (main, 1): 1
 SEMICOLON       ;
+RBRACE       }
+LBRACE       {
+TYPE     int
+ID       b       (main, 1): 0
+SEMICOLON       ;
+TYPE     int
+ID       a       (main, 1): 1
+SEMICOLON       ;
+RBRACE       }
 RBRACE       }
