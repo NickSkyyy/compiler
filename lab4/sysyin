@@ -1,0 +1,29 @@
+/**
+ * return
+ * ---
+ *      a: int
+ * a fake count for 0
+ */
+int f()
+{
+    int a;
+    a = 0;
+    while (a < 10)
+    {
+        a *= 2;
+    }
+    return a;
+}
+
+main()
+{
+    int a;
+    a = 0;
+    if (a == 0)
+    {
+        int a;
+        a = a + 1;
+    }
+    // test for commit line
+    return 0;
+}

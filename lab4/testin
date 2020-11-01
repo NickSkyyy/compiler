@@ -1,0 +1,12 @@
+/**
+ *  Test for comment_b
+ */
+
+main()
+{
+    int a;
+    if (a == 0)
+        a = a + 1;
+}
+
+// Test for comment_l

@@ -1,3 +1,6 @@
-
+# all files
+*.l
+*.out
+*.yy*
 flex-bison-example/
 test.c

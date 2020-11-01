@@ -1,0 +1,60 @@
+TYPE     int
+ID       f       (*, 0): 0
+LPARENTHESES       (
+RPARENTHESES       )
+LBRACE       {
+TYPE     int
+ID       a       (f, 0): 0
+SEMICOLON       ;
+ID       a       (f, 0): 0
+ASSIGN       =
+NUMBER_O       0       0
+SEMICOLON       ;
+WHILE   while
+LPARENTHESES       (
+ID       a       (f, 0): 0
+LESS       <
+NUMBER_D      10      10
+RPARENTHESES       )
+LBRACE       {
+ID       a       (f, 0): 0
+MA      *=
+NUMBER_D       2       2
+SEMICOLON       ;
+RBRACE       }
+RETURN  return
+ID       a       (f, 0): 0
+SEMICOLON       ;
+RBRACE       }
+MAIN    main
+LPARENTHESES       (
+RPARENTHESES       )
+LBRACE       {
+TYPE     int
+ID       a       (main, 0): 0
+SEMICOLON       ;
+ID       a       (main, 0): 0
+ASSIGN       =
+NUMBER_O       0       0
+SEMICOLON       ;
+IF      if
+LPARENTHESES       (
+ID       a       (main, 0): 0
+EQUAL      ==
+NUMBER_O       0       0
+RPARENTHESES       )
+LBRACE       {
+TYPE     int
+ID       a       (main, 1): 0
+SEMICOLON       ;
+ID       a       (main, 1): 0
+ASSIGN       =
+ID       a       (main, 1): 0
+PLUS       +
+NUMBER_D       1       1
+SEMICOLON       ;
+RBRACE       }
+RETURN  return
+NUMBER_O       0       0
+SEMICOLON       ;
+RBRACE       }
