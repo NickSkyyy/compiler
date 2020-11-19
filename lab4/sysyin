@@ -2,6 +2,8 @@
  * return
  * ---
  *      a: int
+ * 函数参数
+ * 树形结构（？）
  * a fake count for 0
  */
 int f()

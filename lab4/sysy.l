@@ -8,14 +8,15 @@
     #include <iomanip>
     #include <iostream>
     #include <map>
+    #include <queue>
     #include <stack>
     #include <stdio.h>
     #include <utility>
     using namespace std;
 }
 %{
-    ifstream input("./testin");
-    ofstream output("./testout");
+    ifstream input("./sysyin");
+    ofstream output("./sysyout");
     
     class domain
     {
@@ -39,7 +40,6 @@
     stack<domain> ss = stack<domain>(); // level depth in domain
     int level = 0;          // son domain in block
     int pathNum = 0;        // check parenthese pair
-
     
     map<domain, int> llen = map<domain, int>();
     map<domain, int>::iterator it1;
@@ -87,6 +87,7 @@ while       while
 lbrace      \{
 rbrace      \}
 lcomment_b  "/*"
+comment_b   \" (\* \/ | .)* \"|.|\n
 rcomment_b  "*/"
 lcomment_l  "//"
 rcomment_l  \n
@@ -119,7 +120,6 @@ plus        "+"
 semicolon   ";"
 space       [ \t\n]
 
-comment_b   .|\n
 comment_l   .
 
 %x COMMENT_B
