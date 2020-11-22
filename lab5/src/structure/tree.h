@@ -8,6 +8,7 @@ enum NodeType
 {
     NODE_CONST, // 常量
     NODE_EXPR,  // 表达式
+    NODE_KEY,   // 保留字
     NODE_PROG,  // 程序段
     NODE_STMT,  // 语句
     NODE_TYPE,  // 类型
@@ -46,19 +47,19 @@ enum StmtType
 struct TreeNode
 {
 public:
-    bool bval;
-    char cval;
-    int ival;
-    int lineNo;
-    int nodeID;
-    NodeType nodeType;
-    OpType opType;
-    StmtType stmeType;
-    string sval;
-    string varName;
-    TreeNode* child = nullptr;
-    TreeNode* sibling = nullptr;
-    Type* type;
+    bool bval;  // 布尔
+    char cval;  // 字符
+    int ival;   // 整型
+    int lineNo; // 行号
+    int nodeID; // 节点号
+    NodeType nodeType;  // 节点类型
+    OpType opType;      // 操作符类型
+    StmtType stmtType;  // 语句类型
+    string sval;        // 字符串
+    string varName;     // 变量名
+    TreeNode* child = nullptr;      // 孩子指针
+    TreeNode* sibling = nullptr;    // 兄弟指针
+    Type* type;                     // 类型
     
 public:
     static string nodeType2Str(NodeType type);

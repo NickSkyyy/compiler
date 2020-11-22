@@ -8,6 +8,7 @@ enum ValueType
     COMPOSE_FUNCTION,
     COMPOSE_STRUCT,
     COMPOSE_UNION,
+    KEY,
     VALUE_BOOL,
     VALUE_CHAR,
     VALUE_INT,
