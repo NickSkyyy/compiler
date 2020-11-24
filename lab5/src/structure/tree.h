@@ -1,4 +1,4 @@
-#ifnedf TREE_H
+#ifndef TREE_H
 #define TREE_H
 
 #include "../pch.h"
@@ -28,9 +28,10 @@ enum OpType
     OP_LAE,     // >=
     OP_LE,      // <
     OP_LEE,     // <=
-    OP_MINUS,   // -
-    OP_MINUSE,  // -=
+    OP_MINS,    // -
+    OP_MINE,    // -=
     OP_MOD,     // %
+    OP_MODE,    // %=
     OP_MUL,     // *
     OP_MULE,    // *=
     OP_NOT,     // !

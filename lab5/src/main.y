@@ -19,14 +19,57 @@
 %token SEMI
 // type(definition)
 %token TYPE
-// orders
-%left  OP_ADD OP_MINS
-%left  OP_MUL OP_DIV
-%right OP_ASS
 
 %% 
 
+// 表达式文法
+HighExp
+: HighExp OP_MUL UnaryExp {
 
+}
+| HighExp OP_DIV UnaryExp {
+
+}
+| HighExp OP_MOD UnaryExp {
+
+} 
+| UnaryExp {
+
+}
+;
+
+LowExp
+: HighExp {
+
+}
+| LowExp OP_ADD HighExp {
+
+}
+| LowExp OP_MINS HighExp {
+
+}
+;
+
+UnaryExp
+: PrimaryExp {
+
+}
+| UnaryOp UnaryExp {
+
+}
+;
+
+UnaryOp
+: OP_MINS {
+
+}
+| OP_NOT {
+
+}
+| OP_PLUS {
+    
+}
+;
 
 %%
 

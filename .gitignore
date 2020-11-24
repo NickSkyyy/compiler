@@ -1,6 +1,7 @@
 # all files
 *.out
 *.yy*
+.vscode
 flex-bison-example/
 lab5-sample2/
 test.c

@@ -18,8 +18,15 @@ enum ValueType
 class Type
 {
 public:
+    ValueType* sibling;
     ValueType type;
-    Type(ValueType valueType);
+
+public:
+    string getTypeInfo();
+    Type(ValueType valueType) : type(valueType){};
+    void addChild(Type* t); // 子列表？
+    void addParam(Type* t); // 参数
+    void addRet(Type* t);   // 返回值
 };
 
 static Type* TYPE_BOOL = new Type(VALUE_BOOL);
