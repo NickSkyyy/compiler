@@ -1,6 +1,3 @@
-#ifndef TYPE_H
-#define TYPE_H
-
 #include "../pch.h"
 
 enum ValueType
@@ -32,6 +29,5 @@ public:
 static Type* TYPE_BOOL = new Type(VALUE_BOOL);
 static Type* TYPE_CHAR = new Type(VALUE_CHAR);
 static Type* TYPE_INT = new Type(VALUE_INT);
+static Type* TYPE_KEY = new Type(KEY);
 static Type* TYPE_STRING = new Type(VALUE_STRING);
-
-#endif TYPE_H

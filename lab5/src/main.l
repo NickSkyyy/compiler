@@ -1,7 +1,6 @@
 %option nounput
 %top{
     #include "common.h"
-    #include "main.tab.h"
     int lineNo = 1;
 }
 %{
@@ -12,6 +11,7 @@
             return ch - 'a' + 10;
         if (ch >= 'A' && ch <= 'F')
             return ch - 'A' + 10;
+        return 0;
     }
     int htod(string s)
     {
@@ -41,15 +41,8 @@ RETURN      return
 TYPE        bool|char|int|string|void
 WHILE       while
 
-lbrace      \{
-rbrace      \}
-lcomment_b  "/*"
-comment_b   \" (\* \/ | .)* \"|.|\n
-rcomment_b  "*/"
-lcomment_l  "//"
-rcomment_l  \n
-lparentheses    "("
-rparentheses    ")"
+COMMENT_B   \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
+COMMENT_L   \/\/[^\n]*
 
 AND         "&&"
 ASS         "="
@@ -77,7 +70,6 @@ NUMO        0[0-7]*
 OR          "||"
 PLUE        "+="
 PLUS        "+"
-SEMI        ";"
 SPAC        [ \t]
 STR         \".*\"
 
@@ -99,84 +91,80 @@ comment_l   .
 }
 {BREAK} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return BREAK;
 }
 {CONST} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return CONST;
 }
 {CONTINUE} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return CONTINUE;
 }
 {ELSE} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return ELSE;
 }
 {FOR} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return FOR;
 }
 {IF} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return IF;
 }
 {MAIN} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return MAIN;
 }
 {RETURN} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return RETURN;
 }
 {TYPE} {
     TreeNode* node = new TreeNode(lineNo, NODE_TYPE);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return TYPE;
 }
 {WHILE} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = KEY;
-    node->vname = yytext;
+    node->type = TYPE_KEY;
+    node->varName = yytext;
     yylval = node;
     return WHILE;
 }
 
-{lcomment_b} {BEGIN COMMENT_B;}
-<COMMENT_B>{comment_b} {;}
-<COMMENT_B>{rcomment_b} {BEGIN INITIAL;}
-{lcomment_l} {BEGIN COMMENT_L;}
-<COMMENT_L>{comment_l} {;}
-<COMMENT_L>{rcomment_l} {BEGIN INITIAL;}
+{COMMENT_B} {;}
+{COMMENT_L} {;}
 
-{AND} {return OP_AND;}
-{ASS} {return OP_ASS;}
+{AND} {return T_AND;}
+{ASS} {return T_ASS;}
 {CHAR} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_CHAR;
@@ -184,32 +172,31 @@ comment_l   .
     yylval = node;
     return CHAR;
 }
-{DIV} {return OP_DIV;}
-{DIVE} {return OP_DIVE;}
+{DIV} {return T_DIV;}
+{DIVE} {return T_DIVE;}
 {EOL} {lineNo++;}
-{EQ} {return OP_EQ;}
+{EQ} {return T_EQ;}
 {ID} {
     TreeNode* node = new TreeNode(lineNo, NODE_VAR);
-    node->vname = string(yytext);
+    node->varName = string(yytext);
     node->bval = false;
-    node->cval = '';
     node->ival = 0;
     node->sval = "";
-    yyval = node;
+    yylval = node;
     return ID;
 }
-{LA} {return OP_LA;}
-{LAE} {return OP_LAE;}
-{LE} {return OP_LE;}
-{LEE} {return OP_LEE;}
-{MINE} {return OP_MINE;}
-{MINS} {return OP_MINS;}
-{MOD} {return OP_MOD;}
-{MODE} {return OP_MODE;}
-{MUL} {return OP_MUL;}
-{MULE} {return OP_MULE;}
-{NOT} {return OP_NOT;}
-{NOTE} {return OP_NOTE;}
+{LA} {return T_LA;}
+{LAE} {return T_LAE;}
+{LE} {return T_LE;}
+{LEE} {return T_LEE;}
+{MINE} {return T_MINE;}
+{MINS} {return T_MINS;}
+{MOD} {return T_MOD;}
+{MODE} {return T_MODE;}
+{MUL} {return T_MUL;}
+{MULE} {return T_MULE;}
+{NOT} {return T_NOT;}
+{NOTE} {return T_NOTE;}
 {NUMD} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_INT;
@@ -231,10 +218,9 @@ comment_l   .
     yylval = node;
     return INT;
 }
-{OR} {return OP_OR;}
-{PLUE} {return OP_PLUE;}
-{PLUS} {return OP_PLUS;}
-{SEMI} {return SEMI;}
+{OR} {return T_OR;}
+{PLUE} {return T_PLUE;}
+{PLUS} {return T_PLUS;}
 {SPAC} {;}
 {STR} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);

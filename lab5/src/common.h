@@ -1,10 +1,7 @@
-#ifndef COMMON_H
-#define COMMON_H
-
-#include "structure/tree.h"
-#include "main.tab.h"
 #include "pch.h"
 
+#include "./structure/tree.h"
 #define YYSTYPE TreeNode*
+#include "./main.tab.h"
 
-#endif COMMON_H
+

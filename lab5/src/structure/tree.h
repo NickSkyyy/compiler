@@ -1,6 +1,3 @@
-#ifndef TREE_H
-#define TREE_H
-
 #include "../pch.h"
 #include "type.h"
 
@@ -64,7 +61,7 @@ public:
     
 public:
     static string nodeType2Str(NodeType type);
-    static string opType2Str(NodeType type);
+    static string opType2Str(OpType type);
     static string stmtType2Str(StmtType type);
     TreeNode(int lineNo, NodeType type);
     void addChild(TreeNode*);
@@ -75,5 +72,3 @@ public:
     void printNodeInfo();
     void printSpecialInfo();
 };
-
-#endif TREE_H

@@ -1,6 +1,3 @@
-#ifndef PCH_H
-#define PCH_H
-
 #include <assert.h>
 #include <cctype>
 #include <cmath>
@@ -16,5 +13,3 @@
 #include <string>
 #include <unordered_map>
 using namespace std;
-
-#endif

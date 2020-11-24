@@ -19,10 +19,13 @@ string TreeNode::nodeType2Str(NodeType type)
         return "type";
     case NODE_VAR:
         return "variable";
+    default:
+        break;
     }
+    return "";
 }
 
-string TreeNode::opType2Str(NodeType type)
+string TreeNode::opType2Str(OpType type)
 {
     switch (type)
     {
@@ -66,7 +69,10 @@ string TreeNode::opType2Str(NodeType type)
         return "!=";
     case OP_OR:
         return "||";
+    default:
+        break;
     }
+    return "";
 }
 
 string TreeNode::stmtType2Str(StmtType type)
@@ -77,7 +83,10 @@ string TreeNode::stmtType2Str(StmtType type)
         return "declaration";
     case STMT_SKIP:
         return "comments";
+    default:
+        break;
     }
+    return "";
 }
 
 TreeNode::TreeNode(int lineNo, NodeType type)
@@ -117,12 +126,20 @@ void TreeNode::genNodeId()
 
 void TreeNode::printAST()
 {
-    // self info
-    cout << "lno@";
-    cout << setiosflags(ios::left) << setw(5) << lineNo;
-    cout << "@";
-    cout << setiosflags(ios::left) << setw(5) << nodeID;
-    cout << setiosflags(ios::left) << setw(15) << nodeType2Str(nodeType);
+    printNodeInfo();
+    printSpecialInfo();
+    cout << endl;
+    TreeNode* p;
+    // children
+    p = child;
+    if (p != nullptr) p->printAST();
+    // siblings
+    p = sibling;
+    if (p != nullptr) p->printAST();
+}
+
+void TreeNode::printChildrenId()
+{
     TreeNode* p = p->child;
     if (p != nullptr)
     {
@@ -134,40 +151,30 @@ void TreeNode::printAST()
         }
         cout << "]";     
     }
-    if (nodeType == NODE_TYPE)
-    {
-        cout <<
-    }
-    cout << endl;
-
-    // children
-    p = this->child;
-    while (p != nullptr)
-    {
-        p->printAST();
-        p = p->sibling;
-    }
-    // siblings
-    p = this->sibling;
-    while (p != nullptr)
-    {
-        p->printAST();
-        p = p->sibling;
-    }
-
-}
-
-void TreeNode::printChildrenId()
-{
-
 }
 
 void TreeNode::printNodeInfo()
 {
-
+    // self info
+    cout << "lno@";
+    cout << setiosflags(ios::left) << setw(5) << lineNo;
+    cout << "@";
+    cout << setiosflags(ios::left) << setw(5) << nodeID;
+    cout << setiosflags(ios::left) << setw(15) << nodeType2Str(nodeType);
+    printChildrenId();
 }
 
 void TreeNode::printSpecialInfo()
 {
-    
+    TreeNode* p = p->child;
+    if (nodeType == NODE_TYPE)
+    {
+        cout << "type: ";
+        cout << p->type->getTypeInfo();
+    }
+    if (nodeType == NODE_VAR)
+    {
+        cout << "varname: ";
+        cout << varName;
+    }
 }
