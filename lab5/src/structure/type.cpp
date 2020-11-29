@@ -12,6 +12,10 @@ string Type::getTypeInfo()
         return "integer";
     case VALUE_STRING:
         return "string";
+    case VALUE_VOID:
+        return "void";
+    default:
+        return "NOT SURE";
     }
 }
 

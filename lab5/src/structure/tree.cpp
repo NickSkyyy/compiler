@@ -11,6 +11,10 @@ string TreeNode::nodeType2Str(NodeType type)
         return "expression";
     case NODE_KEY:
         return "key";
+    case NODE_OP:
+        return "operator";
+    case NODE_PARM:
+        return "param";
     case NODE_PROG:
         return "program";
     case NODE_STMT:
@@ -20,19 +24,14 @@ string TreeNode::nodeType2Str(NodeType type)
     case NODE_VAR:
         return "variable";
     default:
-        break;
+        return "NOT SURE";
     }
-    return "";
 }
 
 string TreeNode::opType2Str(OpType type)
 {
     switch (type)
     {
-    case OP_ADD:
-        return "+";
-    case OP_ADDE:
-        return "+=";
     case OP_AND:
         return "&&";
     case OP_ASS:
@@ -69,24 +68,34 @@ string TreeNode::opType2Str(OpType type)
         return "!=";
     case OP_OR:
         return "||";
+    case OP_PLUE:
+        return "+=";
+    case OP_PLUS:
+        return "+";
     default:
-        break;
+        return "NOT SURE";
     }
-    return "";
 }
 
 string TreeNode::stmtType2Str(StmtType type)
 {
     switch (type)
     {
+    case STMT_ASS:
+        return "assign";
+    case STMT_BLCK:
+        return "block";
     case STMT_DECL:
         return "declaration";
+    case STMT_PARM:
+        return "params";
+    case STMT_RET:
+        return "return";
     case STMT_SKIP:
         return "comments";
     default:
-        break;
+        return "NOT SURE";
     }
-    return "";
 }
 
 TreeNode::TreeNode(int lineNo, NodeType type)
@@ -97,6 +106,7 @@ TreeNode::TreeNode(int lineNo, NodeType type)
 
 void TreeNode::addChild(TreeNode* child)
 {
+    if (child == nullptr) return;
     if (this->child == nullptr)
         this->child = child;
     else
@@ -109,6 +119,7 @@ void TreeNode::addChild(TreeNode* child)
 
 void TreeNode::addSibling(TreeNode* sibling)
 {
+    if (sibling == nullptr) return;
     if (this->sibling == nullptr)
         this->sibling = sibling;
     else
@@ -119,16 +130,22 @@ void TreeNode::addSibling(TreeNode* sibling)
     }
 }
 
-void TreeNode::genNodeId()
+int TreeNode::genNodeId(int id)
 {
-    
+    nodeID = id++;
+    TreeNode* p;
+    // children
+    p = child;
+    if (p != nullptr) id = p->genNodeId(id);
+    p = sibling;
+    if (p != nullptr) id = p->genNodeId(id);
+    return id;
 }
 
 void TreeNode::printAST()
 {
     printNodeInfo();
     printSpecialInfo();
-    cout << endl;
     TreeNode* p;
     // children
     p = child;
@@ -140,7 +157,7 @@ void TreeNode::printAST()
 
 void TreeNode::printChildrenId()
 {
-    TreeNode* p = p->child;
+    TreeNode* p = child;
     if (p != nullptr)
     {
         cout << "children: [ ";
@@ -156,6 +173,7 @@ void TreeNode::printChildrenId()
 void TreeNode::printNodeInfo()
 {
     // self info
+    if (nodeType == NODE_PROG) cout << endl;
     cout << "lno@";
     cout << setiosflags(ios::left) << setw(5) << lineNo;
     cout << "@";
@@ -166,15 +184,56 @@ void TreeNode::printNodeInfo()
 
 void TreeNode::printSpecialInfo()
 {
-    TreeNode* p = p->child;
+    if (nodeType == NODE_CONST)
+    {
+        cout << "value: ";
+        switch (type->type)
+        {
+        case VALUE_BOOL:
+            cout << bval;
+            break;
+        case VALUE_CHAR:
+            cout << cval;
+            break;
+        case VALUE_INT:
+            cout << ival;
+            break;
+        case VALUE_STRING:
+            cout << sval;
+            break;
+        default:
+            cout << "NOT SURE";
+            break;
+        }
+    }
+    if (nodeType == NODE_EXPR)
+    {
+        cout << endl;
+        for (int i = 0; i < 15; i++) cout << " ";
+        cout << "opeartor: ";
+        cout << opType2Str(opType);
+    }
+    if (nodeType == NODE_KEY)
+    {
+        cout << "key: ";
+        cout << varName;
+    }
+    if (nodeType == NODE_STMT)
+    {
+        cout << endl;
+        for (int i = 0; i < 15; i++) cout << " ";
+        cout << "stmt: ";
+        cout << stmtType2Str(stmtType);
+    }
     if (nodeType == NODE_TYPE)
     {
         cout << "type: ";
-        cout << p->type->getTypeInfo();
+        cout << type->getTypeInfo();
     }
     if (nodeType == NODE_VAR)
     {
         cout << "varname: ";
         cout << varName;
     }
+    cout << endl;
 }

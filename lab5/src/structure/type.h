@@ -2,14 +2,15 @@
 
 enum ValueType
 { 
+    NOT_SURE,
     COMPOSE_FUNCTION,
     COMPOSE_STRUCT,
     COMPOSE_UNION,
-    KEY,
     VALUE_BOOL,
     VALUE_CHAR,
     VALUE_INT,
-    VALUE_STRING
+    VALUE_STRING,
+    VALUE_VOID,
 };
 
 class Type
@@ -29,5 +30,5 @@ public:
 static Type* TYPE_BOOL = new Type(VALUE_BOOL);
 static Type* TYPE_CHAR = new Type(VALUE_CHAR);
 static Type* TYPE_INT = new Type(VALUE_INT);
-static Type* TYPE_KEY = new Type(KEY);
 static Type* TYPE_STRING = new Type(VALUE_STRING);
+static Type* TYPE_VOID = new Type(VALUE_VOID);

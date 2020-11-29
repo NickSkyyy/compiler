@@ -41,12 +41,22 @@ RETURN      return
 TYPE        bool|char|int|string|void
 WHILE       while
 
-COMMENT_B   \/\*([^\*^\/]*|[\*^\/*]*|[^\**\/]*)*\*\/
-COMMENT_L   \/\/[^\n]*
+COMMENT_B          \"(\*\/|.)*\"|.
+COMMENT_BL         "\n"
+COMMENT_L          .
+lbrace             "{"
+lcb                "/*"
+lcl                "//"
+lparentheses       "("
+rbrace             "}"
+rcb                "*/"
+rcl                \n
+rparentheses       ")"
 
 AND         "&&"
 ASS         "="
 CHAR        \'.?\'
+COMA        ","
 DIV         "/"
 DIVE        "/="
 EOL         [\r\n|\r|\n]
@@ -70,10 +80,9 @@ NUMO        0[0-7]*
 OR          "||"
 PLUE        "+="
 PLUS        "+"
+SEMI        ";"
 SPAC        [ \t]
 STR         \".*\"
-
-comment_l   .
 
 %x COMMENT_B
 %x COMMENT_L
@@ -82,86 +91,96 @@ comment_l   .
 {BOOL} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_BOOL;
-    if (yytext == "True")
+    if (strcmp(yytext, "True") == 0)
         node->bval = true;
-    else if (yytext == "False")
+    else if (strcmp(yytext, "False") == 0)
         node->bval = false;
     yylval = node;
     return BOOL;
 }
 {BREAK} {
-    TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
+    TreeNode* node = new TreeNode(lineNo, NODE_KEY);   
     node->varName = yytext;
     yylval = node;
     return BREAK;
 }
 {CONST} {
-    TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
+    TreeNode* node = new TreeNode(lineNo, NODE_KEY); 
     node->varName = yytext;
     yylval = node;
     return CONST;
 }
 {CONTINUE} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
     node->varName = yytext;
     yylval = node;
     return CONTINUE;
 }
 {ELSE} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
     node->varName = yytext;
     yylval = node;
     return ELSE;
 }
 {FOR} {
-    TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
+    TreeNode* node = new TreeNode(lineNo, NODE_KEY);   
     node->varName = yytext;
     yylval = node;
     return FOR;
 }
 {IF} {
-    TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
+    TreeNode* node = new TreeNode(lineNo, NODE_KEY);  
     node->varName = yytext;
     yylval = node;
     return IF;
 }
 {MAIN} {
-    TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
+    TreeNode* node = new TreeNode(lineNo, NODE_KEY); 
     node->varName = yytext;
     yylval = node;
     return MAIN;
 }
 {RETURN} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
     node->varName = yytext;
     yylval = node;
     return RETURN;
 }
 {TYPE} {
     TreeNode* node = new TreeNode(lineNo, NODE_TYPE);
-    node->type = TYPE_KEY;
-    node->varName = yytext;
+    if (strcmp(yytext, "bool") == 0)
+        node->type = TYPE_BOOL;
+    else if (strcmp(yytext, "char") == 0)
+        node->type = TYPE_CHAR;
+    else if (strcmp(yytext, "int") == 0)
+        node->type = TYPE_INT;
+    else if (strcmp(yytext, "string") == 0)
+        node->type = TYPE_STRING;
+    else if (strcmp(yytext, "void") == 0)
+        node->type = TYPE_VOID;
+    else
+        node->type = new Type(NOT_SURE);
     yylval = node;
     return TYPE;
 }
 {WHILE} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY);
-    node->type = TYPE_KEY;
     node->varName = yytext;
     yylval = node;
     return WHILE;
 }
 
-{COMMENT_B} {;}
-{COMMENT_L} {;}
+<COMMENT_B>{COMMENT_B} {;}
+<COMMENT_B>{COMMENT_BL} {lineNo++;}
+<COMMENT_L>{COMMENT_L} {;}
+{lbrace} {return LBRAC;}
+{lcb} {BEGIN COMMENT_B;}
+{lcl} {BEGIN COMMENT_L;}
+{lparentheses} {return LPATH;}
+{rbrace} {return RBRAC;}
+<COMMENT_B>{rcb} {BEGIN INITIAL;}
+<COMMENT_L>{rcl} {lineNo++; BEGIN INITIAL;}
+{rparentheses} {return RPATH;}
 
 {AND} {return T_AND;}
 {ASS} {return T_ASS;}
@@ -172,6 +191,7 @@ comment_l   .
     yylval = node;
     return CHAR;
 }
+{COMA} {return COMA;}
 {DIV} {return T_DIV;}
 {DIVE} {return T_DIVE;}
 {EOL} {lineNo++;}
@@ -179,9 +199,6 @@ comment_l   .
 {ID} {
     TreeNode* node = new TreeNode(lineNo, NODE_VAR);
     node->varName = string(yytext);
-    node->bval = false;
-    node->ival = 0;
-    node->sval = "";
     yylval = node;
     return ID;
 }
@@ -221,11 +238,13 @@ comment_l   .
 {OR} {return T_OR;}
 {PLUE} {return T_PLUE;}
 {PLUS} {return T_PLUS;}
+{SEMI} {return SEMI;}
 {SPAC} {;}
 {STR} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_STRING;
-    node->sval = yytext;
+    for (int i = 1; i < strlen(yytext) - 1; i++)
+        node->sval += yytext[i];
     yylval = node;
     return STRING;
 }

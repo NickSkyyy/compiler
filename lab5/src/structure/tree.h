@@ -6,6 +6,8 @@ enum NodeType
     NODE_CONST, // 常量
     NODE_EXPR,  // 表达式
     NODE_KEY,   // 保留字
+    NODE_OP,    // 符号
+    NODE_PARM,  // 参数
     NODE_PROG,  // 程序段
     NODE_STMT,  // 语句
     NODE_TYPE,  // 类型
@@ -14,8 +16,6 @@ enum NodeType
 
 enum OpType
 {
-    OP_ADD,     // +
-    OP_ADDE,    // +=
     OP_AND,     // &&
     OP_ASS,     // =
     OP_DIV,     // /
@@ -34,11 +34,17 @@ enum OpType
     OP_NOT,     // !
     OP_NOTE,    // !=
     OP_OR,      // ||
+    OP_PLUE,    // +=
+    OP_PLUS,    // +
 };
 
 enum StmtType
 {
+    STMT_ASS,   // 赋值
+    STMT_BLCK,  // 语句块
     STMT_DECL,  // 声明
+    STMT_PARM,  // 参数列表
+    STMT_RET,   // 返回（带值）
     STMT_SKIP,  // 注释
 };
 
@@ -60,13 +66,18 @@ public:
     Type* type;                     // 类型
     
 public:
+    /**
+     * 生成节点ID（nodeID）
+     * 
+     * @return int 子树最大ID
+     */
+    int genNodeId(int id);
     static string nodeType2Str(NodeType type);
     static string opType2Str(OpType type);
     static string stmtType2Str(StmtType type);
     TreeNode(int lineNo, NodeType type);
     void addChild(TreeNode*);
-    void addSibling(TreeNode*);
-    void genNodeId();   // 生成节点ID（nodeID）
+    void addSibling(TreeNode*); 
     void printAST();
     void printChildrenId();
     void printNodeInfo();
