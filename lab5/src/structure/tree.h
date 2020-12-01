@@ -71,6 +71,16 @@ public:
     Type* type;                     // 类型
     
 public:
+    bool operator <(const TreeNode b) const
+    {
+        if (nodeID == b.nodeID)
+        {
+            if (parent->nodeID == b.parent->nodeID)
+                return lineNo < b.lineNo;
+            return parent->nodeID < b.parent->nodeID;
+        }
+        return nodeID < b.nodeID;
+    };
     int find(string name);
     int genNodeId(int id);
     static string nodeType2Str(NodeType type);

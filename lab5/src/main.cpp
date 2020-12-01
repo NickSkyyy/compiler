@@ -2,9 +2,26 @@
 
 #define YYSTYPE TreeNode*
 
-extern TreeNode* root;
 extern FILE* yyin;
 extern int yyparse();
+extern TreeNode* root;
+
+map<pair<TreeNode*, string>, TreeNode*> idt;
+
+void printIdt()
+{
+    cout << "++ idt map ++" << endl;
+    for (auto &it : idt)
+    {
+        pair<TreeNode*, string> p = it.first;
+        TreeNode* parent = p.first;
+        string name = p.second;
+        TreeNode* myself = it.second;
+        cout << "var: " << name << " ";
+        cout << "(@" << myself->nodeID;
+        cout << ", @" << parent->nodeID << ")" << endl;
+    }
+}
 
 void printInfo(char* argv[])
 {
@@ -37,6 +54,7 @@ int main(int argc, char* argv[])
         printInfo(argv);
         root->printAST();
         //root->printRe();
+        printIdt();
     }
     return 0;
 }

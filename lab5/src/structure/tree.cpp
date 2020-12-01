@@ -1,6 +1,8 @@
 #include "iomanip"
 #include "tree.h"
 
+extern map<pair<TreeNode*, string>, TreeNode*> idt;
+
 /**
  * 生成节点ID（nodeID）
  * 
@@ -248,6 +250,12 @@ void TreeNode::addSibling(TreeNode* rsib)
 
 void TreeNode::printAST()
 {
+    if (nodeType == NODE_VAR)
+    {
+        pair<TreeNode*, string> 
+        p = make_pair(parent, varName);
+        idt.insert(make_pair(p, this));
+    }
     printNodeInfo();
     printSpecialInfo();
     TreeNode* p;

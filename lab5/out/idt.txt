@@ -37,3 +37,9 @@ lno@4    @20   const          value: 1
 lno@4    @21   statement      children: [ @15 ]
                stmt: i/o
 lno@5    @15   variable       varname: i
+++ idt map ++
+var: a (@4, @3)
+var: i (@15, @14)
+var: i (@15, @17)
+var: i (@15, @19)
+var: i (@15, @21)
