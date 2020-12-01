@@ -1,6 +1,33 @@
 #include "iomanip"
 #include "tree.h"
 
+/**
+ * 生成节点ID（nodeID）
+ * 
+ * @return int 子树最大ID
+ */
+int TreeNode::genNodeId(int id)
+{
+    if (nodeType == NODE_VAR)
+    {
+        int p = -1;
+        //int p = find(varName);
+        if (p == -1)
+            nodeID = id++;
+        else
+            nodeID = p;
+    }  
+    else
+        nodeID = id++;
+    TreeNode* p;
+    // children
+    p = child;
+    if (p != nullptr) id = p->genNodeId(id);
+    p = rsib;
+    if (p != nullptr) id = p->genNodeId(id);
+    return id;
+}
+
 string TreeNode::nodeType2Str(NodeType type)
 {
     switch (type)
@@ -87,6 +114,8 @@ string TreeNode::stmtType2Str(StmtType type)
         return "block";
     case STMT_DECL:
         return "declaration";
+    case STMT_IO:
+        return "i/o";
     case STMT_PARM:
         return "params";
     case STMT_RET:
@@ -104,6 +133,78 @@ TreeNode::TreeNode(int lineNo, NodeType type)
     this->nodeType = type;
 }
 
+/**
+ * 寻找正确ID（符号表）
+ * 
+ * @return int 正确的ID位置
+ */
+int TreeNode::find(string name)
+{
+    // the same level
+    TreeNode* p = lsib;
+    while (p != nullptr) {
+        // declaration
+        if (p->nodeType == NODE_STMT &&
+            p->stmtType == STMT_DECL)
+        {
+            TreeNode* son = p->child;
+            while (son != nullptr)
+            {
+                // variable
+                if (son->nodeType == NODE_VAR &&
+                    son->varName == name)
+                    return son->nodeID;
+                son = son->rsib;
+                // assign(const, var)
+                if (son->nodeType == NODE_STMT &&
+                    son->stmtType == STMT_ASS)
+                {
+                    TreeNode* temp = son->child;
+                    while (temp != nullptr)
+                    {
+                        if (temp->nodeType == NODE_VAR &&
+                            temp->varName == name)
+                            return temp->nodeID;
+                        temp = temp->rsib;
+                    }
+                }
+            }
+        }
+        // variable
+        else if (p->nodeType == NODE_VAR &&
+                 p->varName == name)
+            return p->nodeID;
+        // params
+        else if (p->nodeType == NODE_PARM)
+        {
+            TreeNode* son = p->child;
+            while (son != nullptr)
+            {
+                TreeNode* node = son->child->rsib;
+                if (node->varName == name)
+                    return node->nodeID;
+                son = son->rsib;
+            }
+        }
+        else if (p->nodeType == NODE_STMT &&
+                 p->stmtType == STMT_ASS)
+        {
+            TreeNode* son = p->child;
+            while (son != nullptr)
+            {
+                if (son->nodeType == NODE_VAR &&
+                    son->varName == name)
+                    return son->nodeID;
+                son = son->rsib;
+            }
+        }          
+        p = p->lsib;
+    }
+    // check higher level
+    if (parent != nullptr) return parent->find(name);
+    return -1;
+}
+
 void TreeNode::addChild(TreeNode* child)
 {
     if (child == nullptr) return;
@@ -112,34 +213,32 @@ void TreeNode::addChild(TreeNode* child)
     else
     {
         TreeNode* p = this->child;
-        while (p->sibling != nullptr) { p = p->sibling; }
-        p->sibling = child;
+        while (p->rsib != nullptr) { p = p->rsib; }
+        p->rsib = child;
+        child->lsib = p;
     } 
+    child->parent = this;
 }
 
-void TreeNode::addSibling(TreeNode* sibling)
+void TreeNode::addSibling(TreeNode* rsib)
 {
-    if (sibling == nullptr) return;
-    if (this->sibling == nullptr)
-        this->sibling = sibling;
+    if (rsib == nullptr) return;
+    if (this->rsib == nullptr) {
+        this->rsib = rsib;
+        rsib->lsib = this;
+    }
     else
     {
-        TreeNode* p = this->sibling;
-        while (p->sibling != nullptr) { p = p->sibling; }
-        p->sibling = sibling;
+        TreeNode* p = this->rsib;
+        while (p->rsib != nullptr) { p = p->rsib; }
+        p->rsib = rsib;
+        rsib->lsib = p;
     }
 }
 
-int TreeNode::genNodeId(int id)
+void TreeNode::genIdt()
 {
-    nodeID = id++;
-    TreeNode* p;
-    // children
-    p = child;
-    if (p != nullptr) id = p->genNodeId(id);
-    p = sibling;
-    if (p != nullptr) id = p->genNodeId(id);
-    return id;
+    cout << "gen idt" << endl;
 }
 
 void TreeNode::printAST()
@@ -151,8 +250,23 @@ void TreeNode::printAST()
     p = child;
     if (p != nullptr) p->printAST();
     // siblings
-    p = sibling;
+    p = rsib;
     if (p != nullptr) p->printAST();
+}
+
+void TreeNode::printRe()
+{
+    TreeNode* p;
+    p = child;
+    if (p != nullptr) {
+        while (p->rsib != nullptr) p = p->rsib;
+        p->printRe();
+    }
+    printNodeInfo();
+    printSpecialInfo();
+    p = lsib;
+    if (p != nullptr) p->printRe();
+
 }
 
 void TreeNode::printChildrenId()
@@ -164,7 +278,7 @@ void TreeNode::printChildrenId()
         while (p != nullptr)
         {
             cout << "@" << p->nodeID << " ";
-            p = p->sibling;
+            p = p->rsib;
         }
         cout << "]";     
     }

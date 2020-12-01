@@ -22,12 +22,14 @@
 %token LBRAC RBRAC
 %token LPATH RPATH
 %token SEMI
-
+// i/o
+%token CHAR_IN  INT_IN  STR_IN
+%token CHAR_OUT INT_OUT STR_OUT
 %start StartProg
 %% 
 
 Assign
-: Lval T_ASS BOOL SEMI {
+: Lval T_ASS BOOL {
     $1->bval = $3->bval;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
@@ -37,7 +39,7 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_ASS CHAR SEMI {
+| Lval T_ASS CHAR {
     $1->cval = $3->cval;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
@@ -47,7 +49,13 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_ASS Exp SEMI {
+| Lval T_ASS CHAR_IN LPATH RPATH {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($1);    
+    $$ = node;
+}
+| Lval T_ASS Exp {
     $1->ival = $3->ival;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
@@ -57,7 +65,13 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_ASS STRING SEMI {
+| Lval T_ASS INT_IN LPATH RPATH {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($1);
+    $$ = node;
+}
+| Lval T_ASS STRING {
     $1->sval = $3->sval;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
@@ -67,7 +81,13 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_DIVE Exp SEMI {
+| Lval T_ASS STR_IN LPATH RPATH {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($1);
+    $$ = node;
+}
+| Lval T_DIVE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_DIVE;
@@ -76,7 +96,7 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_MINE Exp SEMI {
+| Lval T_MINE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MINE;
@@ -85,7 +105,7 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_MODE Exp SEMI {
+| Lval T_MODE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MODE;
@@ -94,7 +114,7 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_MULE Exp SEMI {
+| Lval T_MULE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MULE;
@@ -103,7 +123,7 @@ Assign
     node->bval = true;
     $$ = node;
 }
-| Lval T_PLUE Exp SEMI {
+| Lval T_PLUE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_PLUE;
@@ -249,6 +269,21 @@ Exp
 }
 ;
 
+ForHead
+: Assign SEMI {
+    $$ = $1;
+}
+| Decl {
+    $$ = $1;
+}
+| ID SEMI {
+    $$ = $1;
+}
+| SEMI {
+    $$ = nullptr;
+}
+;
+
 FuncDef
 : TYPE MAIN LPATH FuncFParams RPATH Block {
     TreeNode* node = new TreeNode($1->lineNo, NODE_PROG);
@@ -344,6 +379,45 @@ IfRest
 }
 ;
 
+IO
+: CHAR_OUT LPATH CHAR RPATH SEMI {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($3);
+    $$ = node;
+}
+| CHAR_OUT LPATH ID RPATH SEMI {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($3);
+    $$ = node;    
+}
+| CHAR_OUT LPATH INT RPATH SEMI {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($3);
+    $$ = node;    
+}
+| INT_OUT LPATH Exp RPATH SEMI {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($3);
+    $$ = node;
+}
+| STR_OUT LPATH ID RPATH SEMI {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($3);
+    $$ = node;
+}
+| STR_OUT LPATH STRING RPATH SEMI {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_IO;
+    node->addChild($3);
+    $$ = node;
+}
+;
+
 LAndExp
 : EqExp {
     $$ = $1;
@@ -397,7 +471,10 @@ Lval
 ;
 
 PrimaryExp
-: LPATH Exp RPATH {
+: LPATH Cond RPATH {
+    $$ = $2;
+}
+| LPATH Exp RPATH {
     $$ = $2;
 }
 | INT {
@@ -450,7 +527,7 @@ StartProg
 ;
 
 Stmt
-: Assign {
+: Assign SEMI {
     $$ = $1;
 }
 | Block {
@@ -465,6 +542,15 @@ Stmt
 | Exp SEMI {
     $$ = $1;
 }
+| FOR LPATH ForHead Cond SEMI Assign RPATH Stmt {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->addChild($1);
+    node->addChild($3);
+    node->addChild($4);
+    node->addChild($6);
+    node->addChild($8);
+    $$ = node;
+}
 | IF LPATH Cond RPATH Stmt IfRest {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->addChild($1);
@@ -472,6 +558,9 @@ Stmt
     node->addChild($5);
     node->addChild($6);
     $$ = node;
+}
+| IO {
+    $$ = $1;
 }
 | RETURN SEMI {
     $$ = $1;
@@ -487,7 +576,11 @@ Stmt
     $$ = nullptr;
 }
 | WHILE LPATH Cond RPATH Stmt {
-
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->addChild($1);
+    node->addChild($3);
+    node->addChild($5);
+    $$ = node;
 }
 ;
 
@@ -498,10 +591,6 @@ UnaryExp
 | UnaryOp UnaryExp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_EXPR);
     node->opType = $1->opType;
-    if (node->opType == OP_MINS)
-        node->ival = -($2->ival);
-    else
-        node->ival = $2->ival;
     node->addChild($2);
     $$ = node;
 }

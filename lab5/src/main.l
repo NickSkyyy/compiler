@@ -31,13 +31,19 @@
 
 BOOL        True|False
 BREAK       break
+CHAR_IN     getch
+CHAR_OUT    putch
 CONST       const
 CONTINUE    continue
 ELSE        else
 FOR         for
 IF          if
-MAIN        main
+INT_IN      getint
+INT_OUT     putint
+MAIN        main         
 RETURN      return
+STR_IN      getstr
+STR_OUT     putstr
 TYPE        bool|char|int|string|void
 WHILE       while
 
@@ -104,6 +110,8 @@ STR         \".*\"
     yylval = node;
     return BREAK;
 }
+{CHAR_IN} {return CHAR_IN;}
+{CHAR_OUT} {return CHAR_OUT;}
 {CONST} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY); 
     node->varName = yytext;
@@ -134,6 +142,8 @@ STR         \".*\"
     yylval = node;
     return IF;
 }
+{INT_IN} {return INT_IN;}
+{INT_OUT} {return INT_OUT;}
 {MAIN} {
     TreeNode* node = new TreeNode(lineNo, NODE_KEY); 
     node->varName = yytext;
@@ -146,6 +156,8 @@ STR         \".*\"
     yylval = node;
     return RETURN;
 }
+{STR_IN} {return STR_IN;}
+{STR_OUT} {return STR_OUT;}
 {TYPE} {
     TreeNode* node = new TreeNode(lineNo, NODE_TYPE);
     if (strcmp(yytext, "bool") == 0)

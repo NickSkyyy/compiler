@@ -1,0 +1,2746 @@
+State 62 conflicts: 1 reduce/reduce
+State 188 conflicts: 1 shift/reduce
+State 209 conflicts: 1 shift/reduce
+State 210 conflicts: 21 reduce/reduce
+
+
+Grammar
+
+    0 $accept: StartProg $end
+
+    1 Assign: Lval T_ASS BOOL
+    2       | Lval T_ASS CHAR
+    3       | Lval T_ASS CHAR_IN LPATH RPATH
+    4       | Lval T_ASS Exp
+    5       | Lval T_ASS INT_IN LPATH RPATH
+    6       | Lval T_ASS STRING
+    7       | Lval T_ASS STR_IN LPATH RPATH
+    8       | Lval T_DIVE Exp
+    9       | Lval T_MINE Exp
+   10       | Lval T_MODE Exp
+   11       | Lval T_MULE Exp
+   12       | Lval T_PLUE Exp
+
+   13 Block: LBRAC BlockItem RBRAC
+
+   14 BlockItem: Decl BlockItem
+   15          | Stmt BlockItem
+   16          | %empty
+
+   17 CompUnit: Decl
+   18         | Decl CompUnit
+   19         | FuncDef
+   20         | FuncDef CompUnit
+
+   21 Cond: LOrExp
+
+   22 ConstDecl: CONST TYPE ConstDef ConstRest SEMI
+
+   23 ConstDef: ID T_ASS ConstInitVal
+
+   24 ConstInitVal: BOOL
+   25             | CHAR
+   26             | Exp
+   27             | STRING
+
+   28 ConstRest: COMA ConstDef ConstRest
+   29          | %empty
+
+   30 Decl: ConstDecl
+   31     | VarDecl
+
+   32 EqExp: EqExp T_EQ RelExp
+   33      | EqExp T_NOTE RelExp
+   34      | RelExp
+
+   35 Exp: LowExp
+
+   36 ForHead: Assign SEMI
+   37        | Decl
+   38        | ID SEMI
+   39        | SEMI
+
+   40 FuncDef: TYPE MAIN LPATH FuncFParams RPATH Block
+   41        | TYPE ID LPATH FuncFParams RPATH Block
+
+   42 FuncFParam: TYPE ID
+
+   43 FuncFParams: FuncFParam FuncFRest
+   44            | %empty
+
+   45 FuncFRest: COMA FuncFParam FuncFRest
+   46          | %empty
+
+   47 HighExp: HighExp T_DIV UnaryExp
+   48        | HighExp T_MOD UnaryExp
+   49        | HighExp T_MUL UnaryExp
+   50        | UnaryExp
+
+   51 IfRest: ELSE IF LPATH Cond RPATH Stmt IfRest
+   52       | ELSE Stmt
+   53       | %empty
+
+   54 IO: CHAR_OUT LPATH CHAR RPATH SEMI
+   55   | CHAR_OUT LPATH ID RPATH SEMI
+   56   | CHAR_OUT LPATH INT RPATH SEMI
+   57   | INT_OUT LPATH Exp RPATH SEMI
+   58   | STR_OUT LPATH ID RPATH SEMI
+   59   | STR_OUT LPATH STRING RPATH SEMI
+
+   60 LAndExp: EqExp
+   61        | LAndExp T_AND EqExp
+
+   62 LOrExp: LAndExp
+   63       | LAndExp T_OR LOrExp
+
+   64 LowExp: HighExp
+   65       | LowExp T_PLUS HighExp
+   66       | LowExp T_MINS HighExp
+
+   67 Lval: ID
+
+   68 PrimaryExp: LPATH Cond RPATH
+   69           | LPATH Exp RPATH
+   70           | INT
+   71           | Lval
+
+   72 RelExp: LowExp
+   73       | RelExp T_LA LowExp
+   74       | RelExp T_LAE LowExp
+   75       | RelExp T_LE LowExp
+   76       | RelExp T_LEE LowExp
+
+   77 StartProg: CompUnit
+
+   78 Stmt: Assign SEMI
+   79     | Block
+   80     | BREAK SEMI
+   81     | CONTINUE SEMI
+   82     | Exp SEMI
+   83     | FOR LPATH ForHead Cond SEMI Assign RPATH Stmt
+   84     | IF LPATH Cond RPATH Stmt IfRest
+   85     | IO
+   86     | RETURN SEMI
+   87     | RETURN Exp SEMI
+   88     | SEMI
+   89     | WHILE LPATH Cond RPATH Stmt
+
+   90 UnaryExp: PrimaryExp
+   91         | UnaryOp UnaryExp
+
+   92 UnaryOp: T_MINS
+   93        | T_NOT
+   94        | T_PLUS
+
+   95 VarDecl: TYPE VarDef VarRest SEMI
+
+   96 VarDef: ID
+   97       | ID T_ASS VarInitVal
+
+   98 VarInitVal: BOOL
+   99           | CHAR
+  100           | Exp
+  101           | STRING
+
+  102 VarRest: COMA VarDef VarRest
+  103        | %empty
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    T_AND (258) 61
+    T_ASS (259) 1 2 3 4 5 6 7 23 97
+    T_DIV (260) 47
+    T_DIVE (261) 8
+    T_EQ (262) 32
+    T_LA (263) 73
+    T_LAE (264) 74
+    T_LE (265) 75
+    T_LEE (266) 76
+    T_MINE (267) 9
+    T_MINS (268) 66 92
+    T_MOD (269) 48
+    T_MODE (270) 10
+    T_MUL (271) 49
+    T_MULE (272) 11
+    T_NOT (273) 93
+    T_NOTE (274) 33
+    T_OR (275) 63
+    T_PLUE (276) 12
+    T_PLUS (277) 65 94
+    ID (278) 23 38 41 42 55 58 67 96 97
+    BOOL (279) 1 24 98
+    CHAR (280) 2 25 54 99
+    INT (281) 56 70
+    STRING (282) 6 27 59 101
+    BREAK (283) 80
+    CONST (284) 22
+    CONTINUE (285) 81
+    ELSE (286) 51 52
+    FOR (287) 83
+    IF (288) 51 84
+    MAIN (289) 40
+    RETURN (290) 86 87
+    TYPE (291) 22 40 41 42 95
+    WHILE (292) 89
+    COMA (293) 28 45 102
+    LBRAC (294) 13
+    RBRAC (295) 13
+    LPATH (296) 3 5 7 40 41 51 54 55 56 57 58 59 68 69 83 84 89
+    RPATH (297) 3 5 7 40 41 51 54 55 56 57 58 59 68 69 83 84 89
+    SEMI (298) 22 36 38 39 54 55 56 57 58 59 78 80 81 82 83 86 87 88 95
+    CHAR_IN (299) 3
+    INT_IN (300) 5
+    STR_IN (301) 7
+    CHAR_OUT (302) 54 55 56
+    INT_OUT (303) 57
+    STR_OUT (304) 58 59
+
+
+Nonterminals, with rules where they appear
+
+    $accept (50)
+        on left: 0
+    Assign (51)
+        on left: 1 2 3 4 5 6 7 8 9 10 11 12
+        on right: 36 78 83
+    Block (52)
+        on left: 13
+        on right: 40 41 79
+    BlockItem (53)
+        on left: 14 15 16
+        on right: 13 14 15
+    CompUnit (54)
+        on left: 17 18 19 20
+        on right: 18 20 77
+    Cond (55)
+        on left: 21
+        on right: 51 68 83 84 89
+    ConstDecl (56)
+        on left: 22
+        on right: 30
+    ConstDef (57)
+        on left: 23
+        on right: 22 28
+    ConstInitVal (58)
+        on left: 24 25 26 27
+        on right: 23
+    ConstRest (59)
+        on left: 28 29
+        on right: 22 28
+    Decl (60)
+        on left: 30 31
+        on right: 14 17 18 37
+    EqExp (61)
+        on left: 32 33 34
+        on right: 32 33 60 61
+    Exp (62)
+        on left: 35
+        on right: 4 8 9 10 11 12 26 57 69 82 87 100
+    ForHead (63)
+        on left: 36 37 38 39
+        on right: 83
+    FuncDef (64)
+        on left: 40 41
+        on right: 19 20
+    FuncFParam (65)
+        on left: 42
+        on right: 43 45
+    FuncFParams (66)
+        on left: 43 44
+        on right: 40 41
+    FuncFRest (67)
+        on left: 45 46
+        on right: 43 45
+    HighExp (68)
+        on left: 47 48 49 50
+        on right: 47 48 49 64 65 66
+    IfRest (69)
+        on left: 51 52 53
+        on right: 51 84
+    IO (70)
+        on left: 54 55 56 57 58 59
+        on right: 85
+    LAndExp (71)
+        on left: 60 61
+        on right: 61 62 63
+    LOrExp (72)
+        on left: 62 63
+        on right: 21 63
+    LowExp (73)
+        on left: 64 65 66
+        on right: 35 65 66 72 73 74 75 76
+    Lval (74)
+        on left: 67
+        on right: 1 2 3 4 5 6 7 8 9 10 11 12 71
+    PrimaryExp (75)
+        on left: 68 69 70 71
+        on right: 90
+    RelExp (76)
+        on left: 72 73 74 75 76
+        on right: 32 33 34 73 74 75 76
+    StartProg (77)
+        on left: 77
+        on right: 0
+    Stmt (78)
+        on left: 78 79 80 81 82 83 84 85 86 87 88 89
+        on right: 15 51 52 83 84 89
+    UnaryExp (79)
+        on left: 90 91
+        on right: 47 48 49 50 91
+    UnaryOp (80)
+        on left: 92 93 94
+        on right: 91
+    VarDecl (81)
+        on left: 95
+        on right: 31
+    VarDef (82)
+        on left: 96 97
+        on right: 95 102
+    VarInitVal (83)
+        on left: 98 99 100 101
+        on right: 97
+    VarRest (84)
+        on left: 102 103
+        on right: 95 102
+
+
+State 0
+
+    0 $accept: . StartProg $end
+
+    CONST  shift, and go to state 1
+    TYPE   shift, and go to state 2
+
+    CompUnit   go to state 3
+    ConstDecl  go to state 4
+    Decl       go to state 5
+    FuncDef    go to state 6
+    StartProg  go to state 7
+    VarDecl    go to state 8
+
+
+State 1
+
+   22 ConstDecl: CONST . TYPE ConstDef ConstRest SEMI
+
+    TYPE  shift, and go to state 9
+
+
+State 2
+
+   40 FuncDef: TYPE . MAIN LPATH FuncFParams RPATH Block
+   41        | TYPE . ID LPATH FuncFParams RPATH Block
+   95 VarDecl: TYPE . VarDef VarRest SEMI
+
+    ID    shift, and go to state 10
+    MAIN  shift, and go to state 11
+
+    VarDef  go to state 12
+
+
+State 3
+
+   77 StartProg: CompUnit .
+
+    $default  reduce using rule 77 (StartProg)
+
+
+State 4
+
+   30 Decl: ConstDecl .
+
+    $default  reduce using rule 30 (Decl)
+
+
+State 5
+
+   17 CompUnit: Decl .
+   18         | Decl . CompUnit
+
+    CONST  shift, and go to state 1
+    TYPE   shift, and go to state 2
+
+    $default  reduce using rule 17 (CompUnit)
+
+    CompUnit   go to state 13
+    ConstDecl  go to state 4
+    Decl       go to state 5
+    FuncDef    go to state 6
+    VarDecl    go to state 8
+
+
+State 6
+
+   19 CompUnit: FuncDef .
+   20         | FuncDef . CompUnit
+
+    CONST  shift, and go to state 1
+    TYPE   shift, and go to state 2
+
+    $default  reduce using rule 19 (CompUnit)
+
+    CompUnit   go to state 14
+    ConstDecl  go to state 4
+    Decl       go to state 5
+    FuncDef    go to state 6
+    VarDecl    go to state 8
+
+
+State 7
+
+    0 $accept: StartProg . $end
+
+    $end  shift, and go to state 15
+
+
+State 8
+
+   31 Decl: VarDecl .
+
+    $default  reduce using rule 31 (Decl)
+
+
+State 9
+
+   22 ConstDecl: CONST TYPE . ConstDef ConstRest SEMI
+
+    ID  shift, and go to state 16
+
+    ConstDef  go to state 17
+
+
+State 10
+
+   41 FuncDef: TYPE ID . LPATH FuncFParams RPATH Block
+   96 VarDef: ID .
+   97       | ID . T_ASS VarInitVal
+
+    T_ASS  shift, and go to state 18
+    LPATH  shift, and go to state 19
+
+    $default  reduce using rule 96 (VarDef)
+
+
+State 11
+
+   40 FuncDef: TYPE MAIN . LPATH FuncFParams RPATH Block
+
+    LPATH  shift, and go to state 20
+
+
+State 12
+
+   95 VarDecl: TYPE VarDef . VarRest SEMI
+
+    COMA  shift, and go to state 21
+
+    $default  reduce using rule 103 (VarRest)
+
+    VarRest  go to state 22
+
+
+State 13
+
+   18 CompUnit: Decl CompUnit .
+
+    $default  reduce using rule 18 (CompUnit)
+
+
+State 14
+
+   20 CompUnit: FuncDef CompUnit .
+
+    $default  reduce using rule 20 (CompUnit)
+
+
+State 15
+
+    0 $accept: StartProg $end .
+
+    $default  accept
+
+
+State 16
+
+   23 ConstDef: ID . T_ASS ConstInitVal
+
+    T_ASS  shift, and go to state 23
+
+
+State 17
+
+   22 ConstDecl: CONST TYPE ConstDef . ConstRest SEMI
+
+    COMA  shift, and go to state 24
+
+    $default  reduce using rule 29 (ConstRest)
+
+    ConstRest  go to state 25
+
+
+State 18
+
+   97 VarDef: ID T_ASS . VarInitVal
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    BOOL    shift, and go to state 30
+    CHAR    shift, and go to state 31
+    INT     shift, and go to state 32
+    STRING  shift, and go to state 33
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 35
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+    VarInitVal  go to state 42
+
+
+State 19
+
+   41 FuncDef: TYPE ID LPATH . FuncFParams RPATH Block
+
+    TYPE  shift, and go to state 43
+
+    $default  reduce using rule 44 (FuncFParams)
+
+    FuncFParam   go to state 44
+    FuncFParams  go to state 45
+
+
+State 20
+
+   40 FuncDef: TYPE MAIN LPATH . FuncFParams RPATH Block
+
+    TYPE  shift, and go to state 43
+
+    $default  reduce using rule 44 (FuncFParams)
+
+    FuncFParam   go to state 44
+    FuncFParams  go to state 46
+
+
+State 21
+
+  102 VarRest: COMA . VarDef VarRest
+
+    ID  shift, and go to state 47
+
+    VarDef  go to state 48
+
+
+State 22
+
+   95 VarDecl: TYPE VarDef VarRest . SEMI
+
+    SEMI  shift, and go to state 49
+
+
+State 23
+
+   23 ConstDef: ID T_ASS . ConstInitVal
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    BOOL    shift, and go to state 50
+    CHAR    shift, and go to state 51
+    INT     shift, and go to state 32
+    STRING  shift, and go to state 52
+    LPATH   shift, and go to state 34
+
+    ConstInitVal  go to state 53
+    Exp           go to state 54
+    HighExp       go to state 36
+    LowExp        go to state 37
+    Lval          go to state 38
+    PrimaryExp    go to state 39
+    UnaryExp      go to state 40
+    UnaryOp       go to state 41
+
+
+State 24
+
+   28 ConstRest: COMA . ConstDef ConstRest
+
+    ID  shift, and go to state 16
+
+    ConstDef  go to state 55
+
+
+State 25
+
+   22 ConstDecl: CONST TYPE ConstDef ConstRest . SEMI
+
+    SEMI  shift, and go to state 56
+
+
+State 26
+
+   92 UnaryOp: T_MINS .
+
+    $default  reduce using rule 92 (UnaryOp)
+
+
+State 27
+
+   93 UnaryOp: T_NOT .
+
+    $default  reduce using rule 93 (UnaryOp)
+
+
+State 28
+
+   94 UnaryOp: T_PLUS .
+
+    $default  reduce using rule 94 (UnaryOp)
+
+
+State 29
+
+   67 Lval: ID .
+
+    $default  reduce using rule 67 (Lval)
+
+
+State 30
+
+   98 VarInitVal: BOOL .
+
+    $default  reduce using rule 98 (VarInitVal)
+
+
+State 31
+
+   99 VarInitVal: CHAR .
+
+    $default  reduce using rule 99 (VarInitVal)
+
+
+State 32
+
+   70 PrimaryExp: INT .
+
+    $default  reduce using rule 70 (PrimaryExp)
+
+
+State 33
+
+  101 VarInitVal: STRING .
+
+    $default  reduce using rule 101 (VarInitVal)
+
+
+State 34
+
+   68 PrimaryExp: LPATH . Cond RPATH
+   69           | LPATH . Exp RPATH
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Cond        go to state 57
+    EqExp       go to state 58
+    Exp         go to state 59
+    HighExp     go to state 36
+    LAndExp     go to state 60
+    LOrExp      go to state 61
+    LowExp      go to state 62
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 35
+
+  100 VarInitVal: Exp .
+
+    $default  reduce using rule 100 (VarInitVal)
+
+
+State 36
+
+   47 HighExp: HighExp . T_DIV UnaryExp
+   48        | HighExp . T_MOD UnaryExp
+   49        | HighExp . T_MUL UnaryExp
+   64 LowExp: HighExp .
+
+    T_DIV  shift, and go to state 64
+    T_MOD  shift, and go to state 65
+    T_MUL  shift, and go to state 66
+
+    $default  reduce using rule 64 (LowExp)
+
+
+State 37
+
+   35 Exp: LowExp .
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    $default  reduce using rule 35 (Exp)
+
+
+State 38
+
+   71 PrimaryExp: Lval .
+
+    $default  reduce using rule 71 (PrimaryExp)
+
+
+State 39
+
+   90 UnaryExp: PrimaryExp .
+
+    $default  reduce using rule 90 (UnaryExp)
+
+
+State 40
+
+   50 HighExp: UnaryExp .
+
+    $default  reduce using rule 50 (HighExp)
+
+
+State 41
+
+   91 UnaryExp: UnaryOp . UnaryExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 69
+    UnaryOp     go to state 41
+
+
+State 42
+
+   97 VarDef: ID T_ASS VarInitVal .
+
+    $default  reduce using rule 97 (VarDef)
+
+
+State 43
+
+   42 FuncFParam: TYPE . ID
+
+    ID  shift, and go to state 70
+
+
+State 44
+
+   43 FuncFParams: FuncFParam . FuncFRest
+
+    COMA  shift, and go to state 71
+
+    $default  reduce using rule 46 (FuncFRest)
+
+    FuncFRest  go to state 72
+
+
+State 45
+
+   41 FuncDef: TYPE ID LPATH FuncFParams . RPATH Block
+
+    RPATH  shift, and go to state 73
+
+
+State 46
+
+   40 FuncDef: TYPE MAIN LPATH FuncFParams . RPATH Block
+
+    RPATH  shift, and go to state 74
+
+
+State 47
+
+   96 VarDef: ID .
+   97       | ID . T_ASS VarInitVal
+
+    T_ASS  shift, and go to state 18
+
+    $default  reduce using rule 96 (VarDef)
+
+
+State 48
+
+  102 VarRest: COMA VarDef . VarRest
+
+    COMA  shift, and go to state 21
+
+    $default  reduce using rule 103 (VarRest)
+
+    VarRest  go to state 75
+
+
+State 49
+
+   95 VarDecl: TYPE VarDef VarRest SEMI .
+
+    $default  reduce using rule 95 (VarDecl)
+
+
+State 50
+
+   24 ConstInitVal: BOOL .
+
+    $default  reduce using rule 24 (ConstInitVal)
+
+
+State 51
+
+   25 ConstInitVal: CHAR .
+
+    $default  reduce using rule 25 (ConstInitVal)
+
+
+State 52
+
+   27 ConstInitVal: STRING .
+
+    $default  reduce using rule 27 (ConstInitVal)
+
+
+State 53
+
+   23 ConstDef: ID T_ASS ConstInitVal .
+
+    $default  reduce using rule 23 (ConstDef)
+
+
+State 54
+
+   26 ConstInitVal: Exp .
+
+    $default  reduce using rule 26 (ConstInitVal)
+
+
+State 55
+
+   28 ConstRest: COMA ConstDef . ConstRest
+
+    COMA  shift, and go to state 24
+
+    $default  reduce using rule 29 (ConstRest)
+
+    ConstRest  go to state 76
+
+
+State 56
+
+   22 ConstDecl: CONST TYPE ConstDef ConstRest SEMI .
+
+    $default  reduce using rule 22 (ConstDecl)
+
+
+State 57
+
+   68 PrimaryExp: LPATH Cond . RPATH
+
+    RPATH  shift, and go to state 77
+
+
+State 58
+
+   32 EqExp: EqExp . T_EQ RelExp
+   33      | EqExp . T_NOTE RelExp
+   60 LAndExp: EqExp .
+
+    T_EQ    shift, and go to state 78
+    T_NOTE  shift, and go to state 79
+
+    $default  reduce using rule 60 (LAndExp)
+
+
+State 59
+
+   69 PrimaryExp: LPATH Exp . RPATH
+
+    RPATH  shift, and go to state 80
+
+
+State 60
+
+   61 LAndExp: LAndExp . T_AND EqExp
+   62 LOrExp: LAndExp .
+   63       | LAndExp . T_OR LOrExp
+
+    T_AND  shift, and go to state 81
+    T_OR   shift, and go to state 82
+
+    $default  reduce using rule 62 (LOrExp)
+
+
+State 61
+
+   21 Cond: LOrExp .
+
+    $default  reduce using rule 21 (Cond)
+
+
+State 62
+
+   35 Exp: LowExp .
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+   72 RelExp: LowExp .
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    RPATH     reduce using rule 35 (Exp)
+    RPATH     [reduce using rule 72 (RelExp)]
+    $default  reduce using rule 72 (RelExp)
+
+
+State 63
+
+   34 EqExp: RelExp .
+   73 RelExp: RelExp . T_LA LowExp
+   74       | RelExp . T_LAE LowExp
+   75       | RelExp . T_LE LowExp
+   76       | RelExp . T_LEE LowExp
+
+    T_LA   shift, and go to state 83
+    T_LAE  shift, and go to state 84
+    T_LE   shift, and go to state 85
+    T_LEE  shift, and go to state 86
+
+    $default  reduce using rule 34 (EqExp)
+
+
+State 64
+
+   47 HighExp: HighExp T_DIV . UnaryExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 87
+    UnaryOp     go to state 41
+
+
+State 65
+
+   48 HighExp: HighExp T_MOD . UnaryExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 88
+    UnaryOp     go to state 41
+
+
+State 66
+
+   49 HighExp: HighExp T_MUL . UnaryExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 89
+    UnaryOp     go to state 41
+
+
+State 67
+
+   66 LowExp: LowExp T_MINS . HighExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 90
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 68
+
+   65 LowExp: LowExp T_PLUS . HighExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 91
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 69
+
+   91 UnaryExp: UnaryOp UnaryExp .
+
+    $default  reduce using rule 91 (UnaryExp)
+
+
+State 70
+
+   42 FuncFParam: TYPE ID .
+
+    $default  reduce using rule 42 (FuncFParam)
+
+
+State 71
+
+   45 FuncFRest: COMA . FuncFParam FuncFRest
+
+    TYPE  shift, and go to state 43
+
+    FuncFParam  go to state 92
+
+
+State 72
+
+   43 FuncFParams: FuncFParam FuncFRest .
+
+    $default  reduce using rule 43 (FuncFParams)
+
+
+State 73
+
+   41 FuncDef: TYPE ID LPATH FuncFParams RPATH . Block
+
+    LBRAC  shift, and go to state 93
+
+    Block  go to state 94
+
+
+State 74
+
+   40 FuncDef: TYPE MAIN LPATH FuncFParams RPATH . Block
+
+    LBRAC  shift, and go to state 93
+
+    Block  go to state 95
+
+
+State 75
+
+  102 VarRest: COMA VarDef VarRest .
+
+    $default  reduce using rule 102 (VarRest)
+
+
+State 76
+
+   28 ConstRest: COMA ConstDef ConstRest .
+
+    $default  reduce using rule 28 (ConstRest)
+
+
+State 77
+
+   68 PrimaryExp: LPATH Cond RPATH .
+
+    $default  reduce using rule 68 (PrimaryExp)
+
+
+State 78
+
+   32 EqExp: EqExp T_EQ . RelExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 36
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 97
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 79
+
+   33 EqExp: EqExp T_NOTE . RelExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 36
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 98
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 80
+
+   69 PrimaryExp: LPATH Exp RPATH .
+
+    $default  reduce using rule 69 (PrimaryExp)
+
+
+State 81
+
+   61 LAndExp: LAndExp T_AND . EqExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    EqExp       go to state 99
+    HighExp     go to state 36
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 82
+
+   63 LOrExp: LAndExp T_OR . LOrExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    EqExp       go to state 58
+    HighExp     go to state 36
+    LAndExp     go to state 60
+    LOrExp      go to state 100
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 83
+
+   73 RelExp: RelExp T_LA . LowExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 36
+    LowExp      go to state 101
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 84
+
+   74 RelExp: RelExp T_LAE . LowExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 36
+    LowExp      go to state 102
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 85
+
+   75 RelExp: RelExp T_LE . LowExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 36
+    LowExp      go to state 103
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 86
+
+   76 RelExp: RelExp T_LEE . LowExp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    HighExp     go to state 36
+    LowExp      go to state 104
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 87
+
+   47 HighExp: HighExp T_DIV UnaryExp .
+
+    $default  reduce using rule 47 (HighExp)
+
+
+State 88
+
+   48 HighExp: HighExp T_MOD UnaryExp .
+
+    $default  reduce using rule 48 (HighExp)
+
+
+State 89
+
+   49 HighExp: HighExp T_MUL UnaryExp .
+
+    $default  reduce using rule 49 (HighExp)
+
+
+State 90
+
+   47 HighExp: HighExp . T_DIV UnaryExp
+   48        | HighExp . T_MOD UnaryExp
+   49        | HighExp . T_MUL UnaryExp
+   66 LowExp: LowExp T_MINS HighExp .
+
+    T_DIV  shift, and go to state 64
+    T_MOD  shift, and go to state 65
+    T_MUL  shift, and go to state 66
+
+    $default  reduce using rule 66 (LowExp)
+
+
+State 91
+
+   47 HighExp: HighExp . T_DIV UnaryExp
+   48        | HighExp . T_MOD UnaryExp
+   49        | HighExp . T_MUL UnaryExp
+   65 LowExp: LowExp T_PLUS HighExp .
+
+    T_DIV  shift, and go to state 64
+    T_MOD  shift, and go to state 65
+    T_MUL  shift, and go to state 66
+
+    $default  reduce using rule 65 (LowExp)
+
+
+State 92
+
+   45 FuncFRest: COMA FuncFParam . FuncFRest
+
+    COMA  shift, and go to state 71
+
+    $default  reduce using rule 46 (FuncFRest)
+
+    FuncFRest  go to state 105
+
+
+State 93
+
+   13 Block: LBRAC . BlockItem RBRAC
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONST     shift, and go to state 1
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    TYPE      shift, and go to state 111
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    $default  reduce using rule 16 (BlockItem)
+
+    Assign      go to state 117
+    Block       go to state 118
+    BlockItem   go to state 119
+    ConstDecl   go to state 4
+    Decl        go to state 120
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 124
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+    VarDecl     go to state 8
+
+
+State 94
+
+   41 FuncDef: TYPE ID LPATH FuncFParams RPATH Block .
+
+    $default  reduce using rule 41 (FuncDef)
+
+
+State 95
+
+   40 FuncDef: TYPE MAIN LPATH FuncFParams RPATH Block .
+
+    $default  reduce using rule 40 (FuncDef)
+
+
+State 96
+
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+   72 RelExp: LowExp .
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    $default  reduce using rule 72 (RelExp)
+
+
+State 97
+
+   32 EqExp: EqExp T_EQ RelExp .
+   73 RelExp: RelExp . T_LA LowExp
+   74       | RelExp . T_LAE LowExp
+   75       | RelExp . T_LE LowExp
+   76       | RelExp . T_LEE LowExp
+
+    T_LA   shift, and go to state 83
+    T_LAE  shift, and go to state 84
+    T_LE   shift, and go to state 85
+    T_LEE  shift, and go to state 86
+
+    $default  reduce using rule 32 (EqExp)
+
+
+State 98
+
+   33 EqExp: EqExp T_NOTE RelExp .
+   73 RelExp: RelExp . T_LA LowExp
+   74       | RelExp . T_LAE LowExp
+   75       | RelExp . T_LE LowExp
+   76       | RelExp . T_LEE LowExp
+
+    T_LA   shift, and go to state 83
+    T_LAE  shift, and go to state 84
+    T_LE   shift, and go to state 85
+    T_LEE  shift, and go to state 86
+
+    $default  reduce using rule 33 (EqExp)
+
+
+State 99
+
+   32 EqExp: EqExp . T_EQ RelExp
+   33      | EqExp . T_NOTE RelExp
+   61 LAndExp: LAndExp T_AND EqExp .
+
+    T_EQ    shift, and go to state 78
+    T_NOTE  shift, and go to state 79
+
+    $default  reduce using rule 61 (LAndExp)
+
+
+State 100
+
+   63 LOrExp: LAndExp T_OR LOrExp .
+
+    $default  reduce using rule 63 (LOrExp)
+
+
+State 101
+
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+   73 RelExp: RelExp T_LA LowExp .
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    $default  reduce using rule 73 (RelExp)
+
+
+State 102
+
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+   74 RelExp: RelExp T_LAE LowExp .
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    $default  reduce using rule 74 (RelExp)
+
+
+State 103
+
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+   75 RelExp: RelExp T_LE LowExp .
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    $default  reduce using rule 75 (RelExp)
+
+
+State 104
+
+   65 LowExp: LowExp . T_PLUS HighExp
+   66       | LowExp . T_MINS HighExp
+   76 RelExp: RelExp T_LEE LowExp .
+
+    T_MINS  shift, and go to state 67
+    T_PLUS  shift, and go to state 68
+
+    $default  reduce using rule 76 (RelExp)
+
+
+State 105
+
+   45 FuncFRest: COMA FuncFParam FuncFRest .
+
+    $default  reduce using rule 45 (FuncFRest)
+
+
+State 106
+
+   80 Stmt: BREAK . SEMI
+
+    SEMI  shift, and go to state 125
+
+
+State 107
+
+   81 Stmt: CONTINUE . SEMI
+
+    SEMI  shift, and go to state 126
+
+
+State 108
+
+   83 Stmt: FOR . LPATH ForHead Cond SEMI Assign RPATH Stmt
+
+    LPATH  shift, and go to state 127
+
+
+State 109
+
+   84 Stmt: IF . LPATH Cond RPATH Stmt IfRest
+
+    LPATH  shift, and go to state 128
+
+
+State 110
+
+   86 Stmt: RETURN . SEMI
+   87     | RETURN . Exp SEMI
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+    SEMI    shift, and go to state 129
+
+    Exp         go to state 130
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 111
+
+   95 VarDecl: TYPE . VarDef VarRest SEMI
+
+    ID  shift, and go to state 47
+
+    VarDef  go to state 12
+
+
+State 112
+
+   89 Stmt: WHILE . LPATH Cond RPATH Stmt
+
+    LPATH  shift, and go to state 131
+
+
+State 113
+
+   88 Stmt: SEMI .
+
+    $default  reduce using rule 88 (Stmt)
+
+
+State 114
+
+   54 IO: CHAR_OUT . LPATH CHAR RPATH SEMI
+   55   | CHAR_OUT . LPATH ID RPATH SEMI
+   56   | CHAR_OUT . LPATH INT RPATH SEMI
+
+    LPATH  shift, and go to state 132
+
+
+State 115
+
+   57 IO: INT_OUT . LPATH Exp RPATH SEMI
+
+    LPATH  shift, and go to state 133
+
+
+State 116
+
+   58 IO: STR_OUT . LPATH ID RPATH SEMI
+   59   | STR_OUT . LPATH STRING RPATH SEMI
+
+    LPATH  shift, and go to state 134
+
+
+State 117
+
+   78 Stmt: Assign . SEMI
+
+    SEMI  shift, and go to state 135
+
+
+State 118
+
+   79 Stmt: Block .
+
+    $default  reduce using rule 79 (Stmt)
+
+
+State 119
+
+   13 Block: LBRAC BlockItem . RBRAC
+
+    RBRAC  shift, and go to state 136
+
+
+State 120
+
+   14 BlockItem: Decl . BlockItem
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONST     shift, and go to state 1
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    TYPE      shift, and go to state 111
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    $default  reduce using rule 16 (BlockItem)
+
+    Assign      go to state 117
+    Block       go to state 118
+    BlockItem   go to state 137
+    ConstDecl   go to state 4
+    Decl        go to state 120
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 124
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+    VarDecl     go to state 8
+
+
+State 121
+
+   82 Stmt: Exp . SEMI
+
+    SEMI  shift, and go to state 138
+
+
+State 122
+
+   85 Stmt: IO .
+
+    $default  reduce using rule 85 (Stmt)
+
+
+State 123
+
+    1 Assign: Lval . T_ASS BOOL
+    2       | Lval . T_ASS CHAR
+    3       | Lval . T_ASS CHAR_IN LPATH RPATH
+    4       | Lval . T_ASS Exp
+    5       | Lval . T_ASS INT_IN LPATH RPATH
+    6       | Lval . T_ASS STRING
+    7       | Lval . T_ASS STR_IN LPATH RPATH
+    8       | Lval . T_DIVE Exp
+    9       | Lval . T_MINE Exp
+   10       | Lval . T_MODE Exp
+   11       | Lval . T_MULE Exp
+   12       | Lval . T_PLUE Exp
+   71 PrimaryExp: Lval .
+
+    T_ASS   shift, and go to state 139
+    T_DIVE  shift, and go to state 140
+    T_MINE  shift, and go to state 141
+    T_MODE  shift, and go to state 142
+    T_MULE  shift, and go to state 143
+    T_PLUE  shift, and go to state 144
+
+    $default  reduce using rule 71 (PrimaryExp)
+
+
+State 124
+
+   15 BlockItem: Stmt . BlockItem
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONST     shift, and go to state 1
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    TYPE      shift, and go to state 111
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    $default  reduce using rule 16 (BlockItem)
+
+    Assign      go to state 117
+    Block       go to state 118
+    BlockItem   go to state 145
+    ConstDecl   go to state 4
+    Decl        go to state 120
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 124
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+    VarDecl     go to state 8
+
+
+State 125
+
+   80 Stmt: BREAK SEMI .
+
+    $default  reduce using rule 80 (Stmt)
+
+
+State 126
+
+   81 Stmt: CONTINUE SEMI .
+
+    $default  reduce using rule 81 (Stmt)
+
+
+State 127
+
+   83 Stmt: FOR LPATH . ForHead Cond SEMI Assign RPATH Stmt
+
+    ID     shift, and go to state 146
+    CONST  shift, and go to state 1
+    TYPE   shift, and go to state 111
+    SEMI   shift, and go to state 147
+
+    Assign     go to state 148
+    ConstDecl  go to state 4
+    Decl       go to state 149
+    ForHead    go to state 150
+    Lval       go to state 151
+    VarDecl    go to state 8
+
+
+State 128
+
+   84 Stmt: IF LPATH . Cond RPATH Stmt IfRest
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Cond        go to state 152
+    EqExp       go to state 58
+    HighExp     go to state 36
+    LAndExp     go to state 60
+    LOrExp      go to state 61
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 129
+
+   86 Stmt: RETURN SEMI .
+
+    $default  reduce using rule 86 (Stmt)
+
+
+State 130
+
+   87 Stmt: RETURN Exp . SEMI
+
+    SEMI  shift, and go to state 153
+
+
+State 131
+
+   89 Stmt: WHILE LPATH . Cond RPATH Stmt
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Cond        go to state 154
+    EqExp       go to state 58
+    HighExp     go to state 36
+    LAndExp     go to state 60
+    LOrExp      go to state 61
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 132
+
+   54 IO: CHAR_OUT LPATH . CHAR RPATH SEMI
+   55   | CHAR_OUT LPATH . ID RPATH SEMI
+   56   | CHAR_OUT LPATH . INT RPATH SEMI
+
+    ID    shift, and go to state 155
+    CHAR  shift, and go to state 156
+    INT   shift, and go to state 157
+
+
+State 133
+
+   57 IO: INT_OUT LPATH . Exp RPATH SEMI
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 158
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 134
+
+   58 IO: STR_OUT LPATH . ID RPATH SEMI
+   59   | STR_OUT LPATH . STRING RPATH SEMI
+
+    ID      shift, and go to state 159
+    STRING  shift, and go to state 160
+
+
+State 135
+
+   78 Stmt: Assign SEMI .
+
+    $default  reduce using rule 78 (Stmt)
+
+
+State 136
+
+   13 Block: LBRAC BlockItem RBRAC .
+
+    $default  reduce using rule 13 (Block)
+
+
+State 137
+
+   14 BlockItem: Decl BlockItem .
+
+    $default  reduce using rule 14 (BlockItem)
+
+
+State 138
+
+   82 Stmt: Exp SEMI .
+
+    $default  reduce using rule 82 (Stmt)
+
+
+State 139
+
+    1 Assign: Lval T_ASS . BOOL
+    2       | Lval T_ASS . CHAR
+    3       | Lval T_ASS . CHAR_IN LPATH RPATH
+    4       | Lval T_ASS . Exp
+    5       | Lval T_ASS . INT_IN LPATH RPATH
+    6       | Lval T_ASS . STRING
+    7       | Lval T_ASS . STR_IN LPATH RPATH
+
+    T_MINS   shift, and go to state 26
+    T_NOT    shift, and go to state 27
+    T_PLUS   shift, and go to state 28
+    ID       shift, and go to state 29
+    BOOL     shift, and go to state 161
+    CHAR     shift, and go to state 162
+    INT      shift, and go to state 32
+    STRING   shift, and go to state 163
+    LPATH    shift, and go to state 34
+    CHAR_IN  shift, and go to state 164
+    INT_IN   shift, and go to state 165
+    STR_IN   shift, and go to state 166
+
+    Exp         go to state 167
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 140
+
+    8 Assign: Lval T_DIVE . Exp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 168
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 141
+
+    9 Assign: Lval T_MINE . Exp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 169
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 142
+
+   10 Assign: Lval T_MODE . Exp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 170
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 143
+
+   11 Assign: Lval T_MULE . Exp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 171
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 144
+
+   12 Assign: Lval T_PLUE . Exp
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Exp         go to state 172
+    HighExp     go to state 36
+    LowExp      go to state 37
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 145
+
+   15 BlockItem: Stmt BlockItem .
+
+    $default  reduce using rule 15 (BlockItem)
+
+
+State 146
+
+   38 ForHead: ID . SEMI
+   67 Lval: ID .
+
+    SEMI  shift, and go to state 173
+
+    $default  reduce using rule 67 (Lval)
+
+
+State 147
+
+   39 ForHead: SEMI .
+
+    $default  reduce using rule 39 (ForHead)
+
+
+State 148
+
+   36 ForHead: Assign . SEMI
+
+    SEMI  shift, and go to state 174
+
+
+State 149
+
+   37 ForHead: Decl .
+
+    $default  reduce using rule 37 (ForHead)
+
+
+State 150
+
+   83 Stmt: FOR LPATH ForHead . Cond SEMI Assign RPATH Stmt
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Cond        go to state 175
+    EqExp       go to state 58
+    HighExp     go to state 36
+    LAndExp     go to state 60
+    LOrExp      go to state 61
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 151
+
+    1 Assign: Lval . T_ASS BOOL
+    2       | Lval . T_ASS CHAR
+    3       | Lval . T_ASS CHAR_IN LPATH RPATH
+    4       | Lval . T_ASS Exp
+    5       | Lval . T_ASS INT_IN LPATH RPATH
+    6       | Lval . T_ASS STRING
+    7       | Lval . T_ASS STR_IN LPATH RPATH
+    8       | Lval . T_DIVE Exp
+    9       | Lval . T_MINE Exp
+   10       | Lval . T_MODE Exp
+   11       | Lval . T_MULE Exp
+   12       | Lval . T_PLUE Exp
+
+    T_ASS   shift, and go to state 139
+    T_DIVE  shift, and go to state 140
+    T_MINE  shift, and go to state 141
+    T_MODE  shift, and go to state 142
+    T_MULE  shift, and go to state 143
+    T_PLUE  shift, and go to state 144
+
+
+State 152
+
+   84 Stmt: IF LPATH Cond . RPATH Stmt IfRest
+
+    RPATH  shift, and go to state 176
+
+
+State 153
+
+   87 Stmt: RETURN Exp SEMI .
+
+    $default  reduce using rule 87 (Stmt)
+
+
+State 154
+
+   89 Stmt: WHILE LPATH Cond . RPATH Stmt
+
+    RPATH  shift, and go to state 177
+
+
+State 155
+
+   55 IO: CHAR_OUT LPATH ID . RPATH SEMI
+
+    RPATH  shift, and go to state 178
+
+
+State 156
+
+   54 IO: CHAR_OUT LPATH CHAR . RPATH SEMI
+
+    RPATH  shift, and go to state 179
+
+
+State 157
+
+   56 IO: CHAR_OUT LPATH INT . RPATH SEMI
+
+    RPATH  shift, and go to state 180
+
+
+State 158
+
+   57 IO: INT_OUT LPATH Exp . RPATH SEMI
+
+    RPATH  shift, and go to state 181
+
+
+State 159
+
+   58 IO: STR_OUT LPATH ID . RPATH SEMI
+
+    RPATH  shift, and go to state 182
+
+
+State 160
+
+   59 IO: STR_OUT LPATH STRING . RPATH SEMI
+
+    RPATH  shift, and go to state 183
+
+
+State 161
+
+    1 Assign: Lval T_ASS BOOL .
+
+    $default  reduce using rule 1 (Assign)
+
+
+State 162
+
+    2 Assign: Lval T_ASS CHAR .
+
+    $default  reduce using rule 2 (Assign)
+
+
+State 163
+
+    6 Assign: Lval T_ASS STRING .
+
+    $default  reduce using rule 6 (Assign)
+
+
+State 164
+
+    3 Assign: Lval T_ASS CHAR_IN . LPATH RPATH
+
+    LPATH  shift, and go to state 184
+
+
+State 165
+
+    5 Assign: Lval T_ASS INT_IN . LPATH RPATH
+
+    LPATH  shift, and go to state 185
+
+
+State 166
+
+    7 Assign: Lval T_ASS STR_IN . LPATH RPATH
+
+    LPATH  shift, and go to state 186
+
+
+State 167
+
+    4 Assign: Lval T_ASS Exp .
+
+    $default  reduce using rule 4 (Assign)
+
+
+State 168
+
+    8 Assign: Lval T_DIVE Exp .
+
+    $default  reduce using rule 8 (Assign)
+
+
+State 169
+
+    9 Assign: Lval T_MINE Exp .
+
+    $default  reduce using rule 9 (Assign)
+
+
+State 170
+
+   10 Assign: Lval T_MODE Exp .
+
+    $default  reduce using rule 10 (Assign)
+
+
+State 171
+
+   11 Assign: Lval T_MULE Exp .
+
+    $default  reduce using rule 11 (Assign)
+
+
+State 172
+
+   12 Assign: Lval T_PLUE Exp .
+
+    $default  reduce using rule 12 (Assign)
+
+
+State 173
+
+   38 ForHead: ID SEMI .
+
+    $default  reduce using rule 38 (ForHead)
+
+
+State 174
+
+   36 ForHead: Assign SEMI .
+
+    $default  reduce using rule 36 (ForHead)
+
+
+State 175
+
+   83 Stmt: FOR LPATH ForHead Cond . SEMI Assign RPATH Stmt
+
+    SEMI  shift, and go to state 187
+
+
+State 176
+
+   84 Stmt: IF LPATH Cond RPATH . Stmt IfRest
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    Assign      go to state 117
+    Block       go to state 118
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 188
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 177
+
+   89 Stmt: WHILE LPATH Cond RPATH . Stmt
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    Assign      go to state 117
+    Block       go to state 118
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 189
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 178
+
+   55 IO: CHAR_OUT LPATH ID RPATH . SEMI
+
+    SEMI  shift, and go to state 190
+
+
+State 179
+
+   54 IO: CHAR_OUT LPATH CHAR RPATH . SEMI
+
+    SEMI  shift, and go to state 191
+
+
+State 180
+
+   56 IO: CHAR_OUT LPATH INT RPATH . SEMI
+
+    SEMI  shift, and go to state 192
+
+
+State 181
+
+   57 IO: INT_OUT LPATH Exp RPATH . SEMI
+
+    SEMI  shift, and go to state 193
+
+
+State 182
+
+   58 IO: STR_OUT LPATH ID RPATH . SEMI
+
+    SEMI  shift, and go to state 194
+
+
+State 183
+
+   59 IO: STR_OUT LPATH STRING RPATH . SEMI
+
+    SEMI  shift, and go to state 195
+
+
+State 184
+
+    3 Assign: Lval T_ASS CHAR_IN LPATH . RPATH
+
+    RPATH  shift, and go to state 196
+
+
+State 185
+
+    5 Assign: Lval T_ASS INT_IN LPATH . RPATH
+
+    RPATH  shift, and go to state 197
+
+
+State 186
+
+    7 Assign: Lval T_ASS STR_IN LPATH . RPATH
+
+    RPATH  shift, and go to state 198
+
+
+State 187
+
+   83 Stmt: FOR LPATH ForHead Cond SEMI . Assign RPATH Stmt
+
+    ID  shift, and go to state 29
+
+    Assign  go to state 199
+    Lval    go to state 151
+
+
+State 188
+
+   84 Stmt: IF LPATH Cond RPATH Stmt . IfRest
+
+    ELSE  shift, and go to state 200
+
+    ELSE      [reduce using rule 53 (IfRest)]
+    $default  reduce using rule 53 (IfRest)
+
+    IfRest  go to state 201
+
+
+State 189
+
+   89 Stmt: WHILE LPATH Cond RPATH Stmt .
+
+    $default  reduce using rule 89 (Stmt)
+
+
+State 190
+
+   55 IO: CHAR_OUT LPATH ID RPATH SEMI .
+
+    $default  reduce using rule 55 (IO)
+
+
+State 191
+
+   54 IO: CHAR_OUT LPATH CHAR RPATH SEMI .
+
+    $default  reduce using rule 54 (IO)
+
+
+State 192
+
+   56 IO: CHAR_OUT LPATH INT RPATH SEMI .
+
+    $default  reduce using rule 56 (IO)
+
+
+State 193
+
+   57 IO: INT_OUT LPATH Exp RPATH SEMI .
+
+    $default  reduce using rule 57 (IO)
+
+
+State 194
+
+   58 IO: STR_OUT LPATH ID RPATH SEMI .
+
+    $default  reduce using rule 58 (IO)
+
+
+State 195
+
+   59 IO: STR_OUT LPATH STRING RPATH SEMI .
+
+    $default  reduce using rule 59 (IO)
+
+
+State 196
+
+    3 Assign: Lval T_ASS CHAR_IN LPATH RPATH .
+
+    $default  reduce using rule 3 (Assign)
+
+
+State 197
+
+    5 Assign: Lval T_ASS INT_IN LPATH RPATH .
+
+    $default  reduce using rule 5 (Assign)
+
+
+State 198
+
+    7 Assign: Lval T_ASS STR_IN LPATH RPATH .
+
+    $default  reduce using rule 7 (Assign)
+
+
+State 199
+
+   83 Stmt: FOR LPATH ForHead Cond SEMI Assign . RPATH Stmt
+
+    RPATH  shift, and go to state 202
+
+
+State 200
+
+   51 IfRest: ELSE . IF LPATH Cond RPATH Stmt IfRest
+   52       | ELSE . Stmt
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 203
+    RETURN    shift, and go to state 110
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    Assign      go to state 117
+    Block       go to state 118
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 204
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 201
+
+   84 Stmt: IF LPATH Cond RPATH Stmt IfRest .
+
+    $default  reduce using rule 84 (Stmt)
+
+
+State 202
+
+   83 Stmt: FOR LPATH ForHead Cond SEMI Assign RPATH . Stmt
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    Assign      go to state 117
+    Block       go to state 118
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 205
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 203
+
+   51 IfRest: ELSE IF . LPATH Cond RPATH Stmt IfRest
+   84 Stmt: IF . LPATH Cond RPATH Stmt IfRest
+
+    LPATH  shift, and go to state 206
+
+
+State 204
+
+   52 IfRest: ELSE Stmt .
+
+    $default  reduce using rule 52 (IfRest)
+
+
+State 205
+
+   83 Stmt: FOR LPATH ForHead Cond SEMI Assign RPATH Stmt .
+
+    $default  reduce using rule 83 (Stmt)
+
+
+State 206
+
+   51 IfRest: ELSE IF LPATH . Cond RPATH Stmt IfRest
+   84 Stmt: IF LPATH . Cond RPATH Stmt IfRest
+
+    T_MINS  shift, and go to state 26
+    T_NOT   shift, and go to state 27
+    T_PLUS  shift, and go to state 28
+    ID      shift, and go to state 29
+    INT     shift, and go to state 32
+    LPATH   shift, and go to state 34
+
+    Cond        go to state 207
+    EqExp       go to state 58
+    HighExp     go to state 36
+    LAndExp     go to state 60
+    LOrExp      go to state 61
+    LowExp      go to state 96
+    Lval        go to state 38
+    PrimaryExp  go to state 39
+    RelExp      go to state 63
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 207
+
+   51 IfRest: ELSE IF LPATH Cond . RPATH Stmt IfRest
+   84 Stmt: IF LPATH Cond . RPATH Stmt IfRest
+
+    RPATH  shift, and go to state 208
+
+
+State 208
+
+   51 IfRest: ELSE IF LPATH Cond RPATH . Stmt IfRest
+   84 Stmt: IF LPATH Cond RPATH . Stmt IfRest
+
+    T_MINS    shift, and go to state 26
+    T_NOT     shift, and go to state 27
+    T_PLUS    shift, and go to state 28
+    ID        shift, and go to state 29
+    INT       shift, and go to state 32
+    BREAK     shift, and go to state 106
+    CONTINUE  shift, and go to state 107
+    FOR       shift, and go to state 108
+    IF        shift, and go to state 109
+    RETURN    shift, and go to state 110
+    WHILE     shift, and go to state 112
+    LBRAC     shift, and go to state 93
+    LPATH     shift, and go to state 34
+    SEMI      shift, and go to state 113
+    CHAR_OUT  shift, and go to state 114
+    INT_OUT   shift, and go to state 115
+    STR_OUT   shift, and go to state 116
+
+    Assign      go to state 117
+    Block       go to state 118
+    Exp         go to state 121
+    HighExp     go to state 36
+    IO          go to state 122
+    LowExp      go to state 37
+    Lval        go to state 123
+    PrimaryExp  go to state 39
+    Stmt        go to state 209
+    UnaryExp    go to state 40
+    UnaryOp     go to state 41
+
+
+State 209
+
+   51 IfRest: ELSE IF LPATH Cond RPATH Stmt . IfRest
+   84 Stmt: IF LPATH Cond RPATH Stmt . IfRest
+
+    ELSE  shift, and go to state 200
+
+    ELSE      [reduce using rule 53 (IfRest)]
+    $default  reduce using rule 53 (IfRest)
+
+    IfRest  go to state 210
+
+
+State 210
+
+   51 IfRest: ELSE IF LPATH Cond RPATH Stmt IfRest .
+   84 Stmt: IF LPATH Cond RPATH Stmt IfRest .
+
+    T_MINS    reduce using rule 51 (IfRest)
+    T_MINS    [reduce using rule 84 (Stmt)]
+    T_NOT     reduce using rule 51 (IfRest)
+    T_NOT     [reduce using rule 84 (Stmt)]
+    T_PLUS    reduce using rule 51 (IfRest)
+    T_PLUS    [reduce using rule 84 (Stmt)]
+    ID        reduce using rule 51 (IfRest)
+    ID        [reduce using rule 84 (Stmt)]
+    INT       reduce using rule 51 (IfRest)
+    INT       [reduce using rule 84 (Stmt)]
+    BREAK     reduce using rule 51 (IfRest)
+    BREAK     [reduce using rule 84 (Stmt)]
+    CONST     reduce using rule 51 (IfRest)
+    CONST     [reduce using rule 84 (Stmt)]
+    CONTINUE  reduce using rule 51 (IfRest)
+    CONTINUE  [reduce using rule 84 (Stmt)]
+    ELSE      reduce using rule 51 (IfRest)
+    ELSE      [reduce using rule 84 (Stmt)]
+    FOR       reduce using rule 51 (IfRest)
+    FOR       [reduce using rule 84 (Stmt)]
+    IF        reduce using rule 51 (IfRest)
+    IF        [reduce using rule 84 (Stmt)]
+    RETURN    reduce using rule 51 (IfRest)
+    RETURN    [reduce using rule 84 (Stmt)]
+    TYPE      reduce using rule 51 (IfRest)
+    TYPE      [reduce using rule 84 (Stmt)]
+    WHILE     reduce using rule 51 (IfRest)
+    WHILE     [reduce using rule 84 (Stmt)]
+    LBRAC     reduce using rule 51 (IfRest)
+    LBRAC     [reduce using rule 84 (Stmt)]
+    RBRAC     reduce using rule 51 (IfRest)
+    RBRAC     [reduce using rule 84 (Stmt)]
+    LPATH     reduce using rule 51 (IfRest)
+    LPATH     [reduce using rule 84 (Stmt)]
+    SEMI      reduce using rule 51 (IfRest)
+    SEMI      [reduce using rule 84 (Stmt)]
+    CHAR_OUT  reduce using rule 51 (IfRest)
+    CHAR_OUT  [reduce using rule 84 (Stmt)]
+    INT_OUT   reduce using rule 51 (IfRest)
+    INT_OUT   [reduce using rule 84 (Stmt)]
+    STR_OUT   reduce using rule 51 (IfRest)
+    STR_OUT   [reduce using rule 84 (Stmt)]
+    $default  reduce using rule 51 (IfRest)

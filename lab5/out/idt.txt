@@ -1,0 +1,23 @@
+gen idt
++--------------------------+
+- Source file: tests/idt.c -
++--------------------------+
+
+lno@0    @0    program        children: [ @1 @6 ]
+lno@1    @1    statement      children: [ @2 @3 ]
+               stmt: declaration
+lno@1    @2    type           type: integer
+lno@1    @3    statement      children: [ @4 @5 ]
+               stmt: assign
+lno@1    @4    variable       varname: a
+lno@1    @5    const          value: 0
+
+lno@2    @6    program        children: [ @7 @8 @9 ]
+lno@2    @7    type           type: integer
+lno@2    @8    key            key: main
+lno@4    @9    statement      children: [ @10 ]
+               stmt: block
+lno@4    @10   statement      children: [ @11 @12 ]
+               stmt: assign
+lno@4    @11   variable       varname: a
+lno@4    @12   const          value: 1

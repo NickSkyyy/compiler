@@ -6,6 +6,20 @@ extern TreeNode* root;
 extern FILE* yyin;
 extern int yyparse();
 
+void printInfo(char* argv[])
+{
+    cout << "+--------------";
+    for (int i = 0; i <= strlen(argv[1]); i++)
+        cout << "-";
+    cout << "+" << endl;
+    cout << "- Source file: " << argv[1];
+    cout << " -" << endl;
+    cout << "+--------------";
+    for (int i = 0; i <= strlen(argv[1]); i++)
+        cout << "-";
+    cout << "+" << endl;
+}
+
 int main(int argc, char* argv[])
 {
     if (argc == 2)
@@ -19,8 +33,11 @@ int main(int argc, char* argv[])
     yyparse();
     if (root != NULL) 
     {
+        root->genIdt();
         root->genNodeId(0);
+        printInfo(argv);
         root->printAST();
+        //root->printRe();
     }
     return 0;
 }

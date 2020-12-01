@@ -43,6 +43,7 @@ enum StmtType
     STMT_ASS,   // 赋值
     STMT_BLCK,  // 语句块
     STMT_DECL,  // 声明
+    STMT_IO,    // 输入输出
     STMT_PARM,  // 参数列表
     STMT_RET,   // 返回（带值）
     STMT_SKIP,  // 注释
@@ -62,23 +63,23 @@ public:
     string sval;        // 字符串
     string varName;     // 变量名
     TreeNode* child = nullptr;      // 孩子指针
-    TreeNode* sibling = nullptr;    // 兄弟指针
+    TreeNode* parent = nullptr;     // 父亲节点（符号表）
+    TreeNode* lsib = nullptr;       // 左兄弟
+    TreeNode* rsib = nullptr;       // 右兄弟
     Type* type;                     // 类型
     
 public:
-    /**
-     * 生成节点ID（nodeID）
-     * 
-     * @return int 子树最大ID
-     */
+    int find(string name);
     int genNodeId(int id);
     static string nodeType2Str(NodeType type);
     static string opType2Str(OpType type);
     static string stmtType2Str(StmtType type);
-    TreeNode(int lineNo, NodeType type);
+    TreeNode(int lineNo, NodeType type);   
     void addChild(TreeNode*);
     void addSibling(TreeNode*); 
+    void genIdt();
     void printAST();
+    void printRe();
     void printChildrenId();
     void printNodeInfo();
     void printSpecialInfo();
