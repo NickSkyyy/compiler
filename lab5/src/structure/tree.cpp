@@ -10,8 +10,8 @@ int TreeNode::genNodeId(int id)
 {
     if (nodeType == NODE_VAR)
     {
-        int p = -1;
-        //int p = find(varName);
+        //int p = -1;
+        int p = find(varName);
         if (p == -1)
             nodeID = id++;
         else
@@ -112,10 +112,14 @@ string TreeNode::stmtType2Str(StmtType type)
         return "assign";
     case STMT_BLCK:
         return "block";
+    case STMT_COND:
+        return "condition";
     case STMT_DECL:
         return "declaration";
     case STMT_IO:
         return "i/o";
+    case STMT_LOOP:
+        return "loop";
     case STMT_PARM:
         return "params";
     case STMT_RET:
@@ -140,6 +144,10 @@ TreeNode::TreeNode(int lineNo, NodeType type)
  */
 int TreeNode::find(string name)
 {
+    if (parent != nullptr && 
+        parent->nodeType == NODE_STMT &&
+        parent->stmtType == STMT_DECL)
+        return -1;
     // the same level
     TreeNode* p = lsib;
     while (p != nullptr) {
@@ -154,7 +162,6 @@ int TreeNode::find(string name)
                 if (son->nodeType == NODE_VAR &&
                     son->varName == name)
                     return son->nodeID;
-                son = son->rsib;
                 // assign(const, var)
                 if (son->nodeType == NODE_STMT &&
                     son->stmtType == STMT_ASS)
@@ -168,6 +175,7 @@ int TreeNode::find(string name)
                         temp = temp->rsib;
                     }
                 }
+                son = son->rsib;
             }
         }
         // variable
@@ -175,11 +183,12 @@ int TreeNode::find(string name)
                  p->varName == name)
             return p->nodeID;
         // params
-        else if (p->nodeType == NODE_PARM)
+        else if (p->nodeType == NODE_STMT &&
+                 p->stmtType == STMT_PARM)
         {
             TreeNode* son = p->child;
             while (son != nullptr)
-            {
+            {                
                 TreeNode* node = son->child->rsib;
                 if (node->varName == name)
                     return node->nodeID;
@@ -187,7 +196,8 @@ int TreeNode::find(string name)
             }
         }
         else if (p->nodeType == NODE_STMT &&
-                 p->stmtType == STMT_ASS)
+                (p->stmtType == STMT_ASS ||
+                 p->stmtType == STMT_IO))
         {
             TreeNode* son = p->child;
             while (son != nullptr)
@@ -234,11 +244,6 @@ void TreeNode::addSibling(TreeNode* rsib)
         p->rsib = rsib;
         rsib->lsib = p;
     }
-}
-
-void TreeNode::genIdt()
-{
-    cout << "gen idt" << endl;
 }
 
 void TreeNode::printAST()

@@ -42,8 +42,10 @@ enum StmtType
 {
     STMT_ASS,   // 赋值
     STMT_BLCK,  // 语句块
+    STMT_COND,  // 条件
     STMT_DECL,  // 声明
     STMT_IO,    // 输入输出
+    STMT_LOOP,  // 循环
     STMT_PARM,  // 参数列表
     STMT_RET,   // 返回（带值）
     STMT_SKIP,  // 注释

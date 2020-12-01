@@ -1,4 +1,3 @@
-gen idt
 +--------------------------+
 - Source file: tests/idt.c -
 +--------------------------+
@@ -17,7 +16,24 @@ lno@2    @7    type           type: integer
 lno@2    @8    key            key: main
 lno@4    @9    statement      children: [ @10 ]
                stmt: block
-lno@4    @10   statement      children: [ @11 @12 ]
+lno@4    @10   statement      children: [ @11 @12 @17 @19 @21 ]
+               stmt: loop
+lno@4    @11   key            key: for
+lno@4    @12   statement      children: [ @13 @14 ]
+               stmt: declaration
+lno@4    @13   type           type: integer
+lno@4    @14   statement      children: [ @15 @16 ]
                stmt: assign
-lno@4    @11   variable       varname: a
-lno@4    @12   const          value: 1
+lno@4    @15   variable       varname: i
+lno@4    @16   const          value: 0
+lno@4    @17   expression     children: [ @15 @18 ]
+               opeartor: <
+lno@4    @15   variable       varname: i
+lno@4    @18   const          value: 10
+lno@4    @19   statement      children: [ @15 @20 ]
+               stmt: assign
+lno@4    @15   variable       varname: i
+lno@4    @20   const          value: 1
+lno@4    @21   statement      children: [ @15 ]
+               stmt: i/o
+lno@5    @15   variable       varname: i

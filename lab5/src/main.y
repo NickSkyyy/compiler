@@ -269,6 +269,15 @@ Exp
 }
 ;
 
+ForEnd
+: Assign {
+    $$ = $1;
+}
+| {
+    $$ = nullptr;
+}
+;
+
 ForHead
 : Assign SEMI {
     $$ = $1;
@@ -277,6 +286,15 @@ ForHead
     $$ = $1;
 }
 | ID SEMI {
+    $$ = $1;
+}
+| SEMI {
+    $$ = nullptr;
+}
+;
+
+ForMid
+: Cond SEMI {
     $$ = $1;
 }
 | SEMI {
@@ -542,17 +560,19 @@ Stmt
 | Exp SEMI {
     $$ = $1;
 }
-| FOR LPATH ForHead Cond SEMI Assign RPATH Stmt {
+| FOR LPATH ForHead ForMid ForEnd RPATH Stmt {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_LOOP;
     node->addChild($1);
     node->addChild($3);
     node->addChild($4);
-    node->addChild($6);
-    node->addChild($8);
+    node->addChild($5);
+    node->addChild($7);
     $$ = node;
 }
 | IF LPATH Cond RPATH Stmt IfRest {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_COND;
     node->addChild($1);
     node->addChild($3);
     node->addChild($5);
@@ -577,6 +597,7 @@ Stmt
 }
 | WHILE LPATH Cond RPATH Stmt {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_LOOP;
     node->addChild($1);
     node->addChild($3);
     node->addChild($5);

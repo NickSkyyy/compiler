@@ -33,7 +33,6 @@ int main(int argc, char* argv[])
     yyparse();
     if (root != NULL) 
     {
-        root->genIdt();
         root->genNodeId(0);
         printInfo(argv);
         root->printAST();

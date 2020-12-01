@@ -1,9 +1,8 @@
-gen idt
 +---------------------------+
 - Source file: tests/test.c -
 +---------------------------+
 
-lno@0    @0    program        children: [ @1 @7 @13 @19 @25 @31 @36 @41 @46 @51 @56 @61 @64 @69 @72 @75 @89 ]
+lno@0    @0    program        children: [ @1 @7 @13 @19 @25 @31 @36 @41 @46 @51 @56 @61 @64 @69 @72 @75 @88 ]
 lno@6    @1    statement      children: [ @2 @3 @4 ]
                stmt: declaration
 lno@6    @2    key            key: const
@@ -119,233 +118,233 @@ lno@31   @83   type           type: integer
 lno@31   @84   variable       varname: e
 lno@33   @85   statement      children: [ @86 ]
                stmt: block
-lno@33   @86   statement      children: [ @87 @88 ]
+lno@33   @86   statement      children: [ @87 @81 ]
                stmt: return
 lno@33   @87   key            key: return
-lno@33   @88   variable       varname: d
+lno@33   @81   variable       varname: d
 
-lno@37   @89   program        children: [ @90 @91 @92 ]
-lno@37   @90   type           type: integer
-lno@37   @91   key            key: main
-lno@40   @92   statement      children: [ @93 @98 @103 @108 @113 @118 @122 @126 @129 @132 @135 @138 @141 @144 @151 @160 @168 @228 ]
+lno@37   @88   program        children: [ @89 @90 @91 ]
+lno@37   @89   type           type: integer
+lno@37   @90   key            key: main
+lno@40   @91   statement      children: [ @92 @94 @98 @102 @106 @110 @112 @114 @115 @116 @117 @118 @119 @120 @126 @133 @140 @198 ]
                stmt: block
-lno@40   @93   statement      children: [ @94 @95 ]
+lno@40   @92   statement      children: [ @63 @93 ]
                stmt: assign
-lno@40   @94   variable       varname: noval
-lno@40   @95   expression     children: [ @96 @97 ]
+lno@40   @63   variable       varname: noval
+lno@40   @93   expression     children: [ @49 @54 ]
                opeartor: +
-lno@40   @96   variable       varname: dec
-lno@40   @97   variable       varname: oct
-lno@41   @98   statement      children: [ @99 @100 ]
+lno@40   @49   variable       varname: dec
+lno@40   @54   variable       varname: oct
+lno@41   @94   statement      children: [ @63 @95 ]
                stmt: assign
-lno@41   @99   variable       varname: noval
-lno@41   @100  expression     children: [ @101 @102 ]
+lno@41   @63   variable       varname: noval
+lno@41   @95   expression     children: [ @96 @97 ]
                opeartor: -
-lno@41   @101  variable       varname: dec
-lno@41   @102  variable       varname: hex
-lno@42   @103  statement      children: [ @104 @105 ]
+lno@41   @96   variable       varname: dec
+lno@41   @97   variable       varname: hex
+lno@42   @98   statement      children: [ @63 @99 ]
                stmt: assign
-lno@42   @104  variable       varname: noval
-lno@42   @105  expression     children: [ @106 @107 ]
+lno@42   @63   variable       varname: noval
+lno@42   @99   expression     children: [ @100 @101 ]
                opeartor: *
-lno@42   @106  variable       varname: oct
-lno@42   @107  variable       varname: hex
-lno@43   @108  statement      children: [ @109 @110 ]
+lno@42   @100  variable       varname: oct
+lno@42   @101  variable       varname: hex
+lno@43   @102  statement      children: [ @63 @103 ]
                stmt: assign
-lno@43   @109  variable       varname: noval
-lno@43   @110  expression     children: [ @111 @112 ]
+lno@43   @63   variable       varname: noval
+lno@43   @103  expression     children: [ @104 @105 ]
                opeartor: /
-lno@43   @111  variable       varname: oct
-lno@43   @112  variable       varname: hex
-lno@44   @113  statement      children: [ @114 @115 ]
+lno@43   @104  variable       varname: oct
+lno@43   @105  variable       varname: hex
+lno@44   @106  statement      children: [ @63 @107 ]
                stmt: assign
-lno@44   @114  variable       varname: noval
-lno@44   @115  expression     children: [ @116 @117 ]
+lno@44   @63   variable       varname: noval
+lno@44   @107  expression     children: [ @108 @109 ]
                opeartor: %
-lno@44   @116  variable       varname: hex
-lno@44   @117  variable       varname: dec
-lno@45   @118  statement      children: [ @119 @120 ]
+lno@44   @108  variable       varname: hex
+lno@44   @109  variable       varname: dec
+lno@45   @110  statement      children: [ @63 @111 ]
                stmt: assign
-lno@45   @119  variable       varname: noval
-lno@45   @120  expression     children: [ @121 ]
+lno@45   @63   variable       varname: noval
+lno@45   @111  expression     children: [ @63 ]
                opeartor: +
-lno@45   @121  variable       varname: noval
-lno@46   @122  statement      children: [ @123 @124 ]
+lno@45   @63   variable       varname: noval
+lno@46   @112  statement      children: [ @63 @113 ]
                stmt: assign
-lno@46   @123  variable       varname: noval
-lno@46   @124  expression     children: [ @125 ]
+lno@46   @63   variable       varname: noval
+lno@46   @113  expression     children: [ @63 ]
                opeartor: -
-lno@46   @125  variable       varname: noval
-lno@47   @126  statement      children: [ @127 @128 ]
+lno@46   @63   variable       varname: noval
+lno@47   @114  statement      children: [ @63 @63 ]
                stmt: assign
-lno@47   @127  variable       varname: noval
-lno@47   @128  variable       varname: noval
-lno@48   @129  statement      children: [ @130 @131 ]
+lno@47   @63   variable       varname: noval
+lno@47   @63   variable       varname: noval
+lno@48   @115  statement      children: [ @63 @63 ]
                stmt: assign
-lno@48   @130  variable       varname: noval
-lno@48   @131  variable       varname: noval
-lno@49   @132  statement      children: [ @133 @134 ]
+lno@48   @63   variable       varname: noval
+lno@48   @63   variable       varname: noval
+lno@49   @116  statement      children: [ @63 @63 ]
                stmt: assign
-lno@49   @133  variable       varname: noval
-lno@49   @134  variable       varname: noval
-lno@50   @135  statement      children: [ @136 @137 ]
+lno@49   @63   variable       varname: noval
+lno@49   @63   variable       varname: noval
+lno@50   @117  statement      children: [ @63 @63 ]
                stmt: assign
-lno@50   @136  variable       varname: noval
-lno@50   @137  variable       varname: noval
-lno@51   @138  statement      children: [ @139 @140 ]
+lno@50   @63   variable       varname: noval
+lno@50   @63   variable       varname: noval
+lno@51   @118  statement      children: [ @63 @63 ]
                stmt: assign
-lno@51   @139  variable       varname: noval
-lno@51   @140  variable       varname: noval
-lno@52   @141  statement      children: [ @142 @143 ]
+lno@51   @63   variable       varname: noval
+lno@51   @63   variable       varname: noval
+lno@52   @119  statement      children: [ @63 @63 ]
                stmt: assign
-lno@52   @142  variable       varname: noval
-lno@52   @143  variable       varname: noval
-lno@55   @144  statement      children: [ @145 @146 ]
+lno@52   @63   variable       varname: noval
+lno@52   @63   variable       varname: noval
+lno@55   @120  statement      children: [ @63 @121 ]
                stmt: assign
-lno@55   @145  variable       varname: noval
-lno@55   @146  expression     children: [ @147 @148 ]
+lno@55   @63   variable       varname: noval
+lno@55   @121  expression     children: [ @122 @123 ]
                opeartor: +
-lno@55   @147  variable       varname: dec
-lno@55   @148  expression     children: [ @149 @150 ]
+lno@55   @122  variable       varname: dec
+lno@55   @123  expression     children: [ @124 @125 ]
                opeartor: *
-lno@55   @149  variable       varname: oct
-lno@55   @150  variable       varname: hex
-lno@56   @151  statement      children: [ @152 @153 ]
+lno@55   @124  variable       varname: oct
+lno@55   @125  variable       varname: hex
+lno@56   @126  statement      children: [ @63 @127 ]
                stmt: assign
-lno@56   @152  variable       varname: noval
-lno@56   @153  expression     children: [ @154 @159 ]
+lno@56   @63   variable       varname: noval
+lno@56   @127  expression     children: [ @128 @132 ]
                opeartor: +
-lno@56   @154  expression     children: [ @155 @156 ]
+lno@56   @128  expression     children: [ @63 @129 ]
                opeartor: +
-lno@56   @155  variable       varname: noval
-lno@56   @156  expression     children: [ @157 @158 ]
+lno@56   @63   variable       varname: noval
+lno@56   @129  expression     children: [ @130 @131 ]
                opeartor: *
-lno@56   @157  variable       varname: dec
-lno@56   @158  variable       varname: oct
-lno@56   @159  variable       varname: hex
-lno@57   @160  statement      children: [ @161 @162 ]
+lno@56   @130  variable       varname: dec
+lno@56   @131  variable       varname: oct
+lno@56   @132  variable       varname: hex
+lno@57   @133  statement      children: [ @63 @134 ]
                stmt: assign
-lno@57   @161  variable       varname: noval
-lno@57   @162  expression     children: [ @163 @167 ]
+lno@57   @63   variable       varname: noval
+lno@57   @134  expression     children: [ @135 @139 ]
                opeartor: *
-lno@57   @163  expression     children: [ @164 @165 ]
+lno@57   @135  expression     children: [ @136 @137 ]
                opeartor: -
-lno@57   @164  variable       varname: dec
-lno@57   @165  expression     children: [ @166 ]
+lno@57   @136  variable       varname: dec
+lno@57   @137  expression     children: [ @138 ]
                opeartor: -
-lno@57   @166  variable       varname: oct
-lno@57   @167  variable       varname: hex
-lno@59   @168  statement      children: [ @169 @170 @173 @179 @180 @181 @184 @195 @196 @197 @202 @213 @214 ]
-               stmt: assign
-lno@59   @169  key            key: if
-lno@59   @170  expression     children: [ @171 @172 ]
+lno@57   @138  variable       varname: oct
+lno@57   @139  variable       varname: hex
+lno@59   @140  statement      children: [ @141 @142 @144 @150 @151 @152 @155 @166 @167 @168 @173 @183 @184 ]
+               stmt: condition
+lno@59   @141  key            key: if
+lno@59   @142  expression     children: [ @63 @143 ]
                opeartor: !=
-lno@59   @171  variable       varname: noval
-lno@59   @172  const          value: 0
-lno@61   @173  statement      children: [ @174 ]
+lno@59   @63   variable       varname: noval
+lno@59   @143  const          value: 0
+lno@61   @144  statement      children: [ @145 ]
                stmt: block
-lno@61   @174  statement      children: [ @175 @176 ]
+lno@61   @145  statement      children: [ @146 @147 ]
                stmt: declaration
-lno@61   @175  type           type: integer
-lno@61   @176  statement      children: [ @177 @178 ]
+lno@61   @146  type           type: integer
+lno@61   @147  statement      children: [ @148 @149 ]
                stmt: assign
-lno@61   @177  variable       varname: noval
-lno@61   @178  const          value: 0
-lno@63   @179  key            key: else
-lno@63   @180  key            key: if
-lno@63   @181  expression     children: [ @182 @183 ]
+lno@61   @148  variable       varname: noval
+lno@61   @149  const          value: 0
+lno@63   @150  key            key: else
+lno@63   @151  key            key: if
+lno@63   @152  expression     children: [ @153 @154 ]
                opeartor: ==
-lno@63   @182  variable       varname: noval
-lno@63   @183  const          value: 1
-lno@65   @184  statement      children: [ @185 ]
+lno@63   @153  variable       varname: noval
+lno@63   @154  const          value: 1
+lno@65   @155  statement      children: [ @156 ]
                stmt: block
-lno@65   @185  statement      children: [ @186 @187 @194 ]
-               stmt: assign
-lno@65   @186  key            key: if
-lno@65   @187  expression     children: [ @188 @191 ]
+lno@65   @156  statement      children: [ @157 @158 @165 ]
+               stmt: condition
+lno@65   @157  key            key: if
+lno@65   @158  expression     children: [ @159 @162 ]
                opeartor: &&
-lno@65   @188  expression     children: [ @189 @190 ]
+lno@65   @159  expression     children: [ @160 @161 ]
                opeartor: >=
-lno@65   @189  variable       varname: noval
-lno@65   @190  const          value: 1
-lno@65   @191  expression     children: [ @192 @193 ]
+lno@65   @160  variable       varname: noval
+lno@65   @161  const          value: 1
+lno@65   @162  expression     children: [ @163 @164 ]
                opeartor: <=
-lno@65   @192  variable       varname: noval
-lno@65   @193  const          value: 1
-lno@66   @194  key            key: return
-lno@68   @195  key            key: else
-lno@68   @196  key            key: if
-lno@68   @197  expression     children: [ @198 @199 ]
+lno@65   @163  variable       varname: noval
+lno@65   @164  const          value: 1
+lno@66   @165  key            key: return
+lno@68   @166  key            key: else
+lno@68   @167  key            key: if
+lno@68   @168  expression     children: [ @169 @170 ]
                opeartor: ||
-lno@68   @198  variable       varname: dec
-lno@68   @199  expression     children: [ @200 @201 ]
+lno@68   @169  variable       varname: dec
+lno@68   @170  expression     children: [ @171 @172 ]
                opeartor: &&
-lno@68   @200  variable       varname: oct
-lno@68   @201  variable       varname: hex
-lno@68   @202  statement      children: [ @203 @205 @207 @209 @211 ]
+lno@68   @171  variable       varname: oct
+lno@68   @172  variable       varname: hex
+lno@68   @173  statement      children: [ @174 @176 @178 @180 @182 ]
                stmt: block
-lno@68   @203  statement      children: [ @204 ]
+lno@68   @174  statement      children: [ @175 ]
                stmt: i/o
-lno@70   @204  const          value: a
-lno@70   @205  statement      children: [ @206 ]
+lno@70   @175  const          value: a
+lno@70   @176  statement      children: [ @177 ]
                stmt: i/o
-lno@71   @206  variable       varname: ch
-lno@71   @207  statement      children: [ @208 ]
+lno@71   @177  variable       varname: ch
+lno@71   @178  statement      children: [ @179 ]
                stmt: i/o
-lno@72   @208  variable       varname: noval
-lno@72   @209  statement      children: [ @210 ]
+lno@72   @179  variable       varname: noval
+lno@72   @180  statement      children: [ @181 ]
                stmt: i/o
-lno@73   @210  const          value: 12
-lno@74   @211  statement      children: [ @212 ]
+lno@73   @181  const          value: 12
+lno@74   @182  statement      children: [ @179 ]
                stmt: i/o
-lno@74   @212  variable       varname: noval
-lno@76   @213  key            key: else
-lno@78   @214  statement      children: [ @215 ]
+lno@74   @179  variable       varname: noval
+lno@76   @183  key            key: else
+lno@78   @184  statement      children: [ @185 ]
                stmt: block
-lno@78   @215  statement      children: [ @216 @217 @226 ]
-               stmt: assign
-lno@78   @216  key            key: while
-lno@78   @217  expression     children: [ @218 @222 ]
+lno@78   @185  statement      children: [ @186 @187 @196 ]
+               stmt: loop
+lno@78   @186  key            key: while
+lno@78   @187  expression     children: [ @188 @192 ]
                opeartor: &&
-lno@78   @218  expression     children: [ @219 ]
+lno@78   @188  expression     children: [ @189 ]
                opeartor: !
-lno@78   @219  expression     children: [ @220 @221 ]
+lno@78   @189  expression     children: [ @190 @191 ]
                opeartor: <
-lno@78   @220  variable       varname: noval
-lno@78   @221  const          value: 1
-lno@78   @222  expression     children: [ @223 ]
+lno@78   @190  variable       varname: noval
+lno@78   @191  const          value: 1
+lno@78   @192  expression     children: [ @193 ]
                opeartor: !
-lno@78   @223  expression     children: [ @224 @225 ]
+lno@78   @193  expression     children: [ @194 @195 ]
                opeartor: >
-lno@78   @224  variable       varname: noval
-lno@78   @225  const          value: 1
-lno@80   @226  statement      children: [ @227 ]
+lno@78   @194  variable       varname: noval
+lno@78   @195  const          value: 1
+lno@80   @196  statement      children: [ @197 ]
                stmt: block
-lno@80   @227  key            key: break
-lno@83   @228  statement      children: [ @229 @230 @235 @238 @241 ]
-               stmt: assign
-lno@83   @229  key            key: for
-lno@83   @230  statement      children: [ @231 @232 ]
+lno@80   @197  key            key: break
+lno@83   @198  statement      children: [ @199 @200 @205 @207 @209 ]
+               stmt: loop
+lno@83   @199  key            key: for
+lno@83   @200  statement      children: [ @201 @202 ]
                stmt: declaration
-lno@83   @231  type           type: integer
-lno@83   @232  statement      children: [ @233 @234 ]
+lno@83   @201  type           type: integer
+lno@83   @202  statement      children: [ @203 @204 ]
                stmt: assign
-lno@83   @233  variable       varname: i
-lno@83   @234  const          value: 0
-lno@83   @235  expression     children: [ @236 @237 ]
+lno@83   @203  variable       varname: i
+lno@83   @204  const          value: 0
+lno@83   @205  expression     children: [ @203 @206 ]
                opeartor: <
-lno@83   @236  variable       varname: i
-lno@83   @237  const          value: 10
-lno@83   @238  statement      children: [ @239 @240 ]
+lno@83   @203  variable       varname: i
+lno@83   @206  const          value: 10
+lno@83   @207  statement      children: [ @203 @208 ]
                stmt: assign
-lno@83   @239  variable       varname: i
-lno@83   @240  const          value: 1
-lno@85   @241  statement      children: [ @242 ]
+lno@83   @203  variable       varname: i
+lno@83   @208  const          value: 1
+lno@85   @209  statement      children: [ @210 ]
                stmt: block
-lno@85   @242  statement      children: [ @243 @244 @246 ]
-               stmt: assign
-lno@85   @243  key            key: if
-lno@85   @244  expression     children: [ @245 ]
+lno@85   @210  statement      children: [ @211 @212 @213 ]
+               stmt: condition
+lno@85   @211  key            key: if
+lno@85   @212  expression     children: [ @63 ]
                opeartor: !
-lno@85   @245  variable       varname: noval
-lno@85   @246  key            key: continue
+lno@85   @63   variable       varname: noval
+lno@85   @213  key            key: continue
