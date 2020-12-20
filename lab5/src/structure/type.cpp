@@ -1,5 +1,59 @@
 #include "type.h"
 
+bool Type::operator ==(const Type& b)
+{
+    if (b.type == NOT_SURE)
+        return true;
+    switch (type)
+    {
+    case NOT_SURE:
+        return true;
+    case VALUE_BOOL:
+        if (b.type == VALUE_INT)
+            return true;
+        break;
+    case VALUE_CHAR:
+        if (b.type == VALUE_INT)
+            return true;
+        break;
+    case VALUE_INT:
+        if (b.type == VALUE_CHAR || 
+            b.type == VALUE_BOOL)
+            return true;
+        break;
+    default:
+        break;
+    }
+    return type == b.type;
+};
+
+bool Type::operator !=(const Type& b)
+{
+    if (b.type == NOT_SURE)
+        return false;
+    switch (type)
+    {
+    case NOT_SURE:
+        return false;
+    case VALUE_BOOL:
+        if (b.type == VALUE_INT)
+            return false;
+        break;
+    case VALUE_CHAR:
+        if (b.type == VALUE_INT)
+            return false;
+        break;
+    case VALUE_INT:
+        if (b.type == VALUE_CHAR ||
+            b.type == VALUE_BOOL)
+            return false;
+        break;
+    default:
+        break;
+    }
+    return type != b.type;
+}
+
 string Type::getTypeInfo()
 {
     switch (type)

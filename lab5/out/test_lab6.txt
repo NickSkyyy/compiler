@@ -1,0 +1,6 @@
+error @16: cannot match type <integer> to identifier <s0>
+error @17: cannot match type <integer> to identifier <s1>
+error @18: cannot match type <string> to identifier <s2>
++--------------------------------+
+- Source file: tests/test_lab6.c -
++--------------------------------+

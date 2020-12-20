@@ -20,6 +20,8 @@ public:
     ValueType type;
 
 public:
+    bool operator ==(const Type& b);
+    bool operator !=(const Type& b);
     string getTypeInfo();
     Type(ValueType valueType) : type(valueType){};
     void addChild(Type* t); // 子列表？

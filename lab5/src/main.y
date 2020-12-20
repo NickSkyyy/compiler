@@ -2,6 +2,7 @@
     #include "common.h"
     TreeNode* root;
     extern int lineNo;
+    extern int tErr;
     int yylex();
     int yyerror(char const*);
 %}
@@ -34,6 +35,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -44,6 +46,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -52,6 +55,7 @@ Assign
 | Lval T_ASS CHAR_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->type = $1->type;
     node->addChild($1);    
     $$ = node;
 }
@@ -60,6 +64,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -68,6 +73,7 @@ Assign
 | Lval T_ASS INT_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->type = $1->type;
     node->addChild($1);
     $$ = node;
 }
@@ -76,6 +82,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -84,6 +91,7 @@ Assign
 | Lval T_ASS STR_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->type = $1->type;
     node->addChild($1);
     $$ = node;
 }
@@ -91,6 +99,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_DIVE;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -100,6 +109,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MINE;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -109,6 +119,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MODE;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -118,6 +129,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MULE;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -127,6 +139,7 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_PLUE;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -194,14 +207,39 @@ ConstDecl
     node->addChild($3);
     node->addChild($4);
     $$ = node;
+    if (*($2->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $2->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $3->child->varName << ">" << endl;
+    }
+    TreeNode* p = $4;
+    while (p != nullptr)
+    {
+        if (*($2->type) != *(p->type))
+        {
+            tErr++;
+            cout << "error @" << $1->lineNo << ": ";
+            cout << "cannot match type <";
+            cout << $2->type->getTypeInfo() << "> ";
+            cout << "to identifier <";
+            cout << p->child->varName << ">" << endl;
+        }
+        p = p->rsib;
+    }
 }
 ;
 
 ConstDef
 : ID T_ASS ConstInitVal {
+    $1->type = $3->type;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -643,19 +681,46 @@ VarDecl
     node->addChild($2);
     node->addChild($3);
     $$ = node;
+    if (*($1->type) != *($2->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $2->child->varName << ">" << endl;
+    }
+    TreeNode* p = $3;
+    while (p != nullptr)
+    {
+        if (*($1->type) != *(p->type))
+        {
+            tErr++;
+            cout << "error @" << $1->lineNo << ": ";
+            cout << "cannot match type <";
+            cout << $1->type->getTypeInfo() << "> ";
+            cout << "to identifier <";
+            cout << p->child->varName << ">" << endl;
+        }
+        p = p->rsib;
+    }
 }
 ;
 
 VarDef
 : ID {
+    $1->type = new Type(NOT_SURE);
     $$ = $1;
 }
 | ID T_ASS VarInitVal {
+    $1->type = $3->type;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
+    node->type = $1->type;
     node->addChild($1);
     node->addChild($3);
+    node->bval = true;
     $$ = node;
 }
 ;

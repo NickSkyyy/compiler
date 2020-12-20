@@ -30,5 +30,8 @@ clean:
 idt:
 	./bin/main.out tests/idt.c > ./out/idt.txt
 
-test:
-	./bin/main.out tests/test.c > ./out/test.txt
+test5:
+	./bin/main.out tests/test_lab5.c > ./out/test_lab5.txt
+
+test6:
+	./bin/main.out tests/test_lab6.c > ./out/test_lab6.txt

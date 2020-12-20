@@ -1,10 +1,24 @@
 #include "iomanip"
 #include "tree.h"
 
+/* 符号表：{<父亲节点，变量名>: 节点} */
 extern map<pair<TreeNode*, string>, TreeNode*> idt;
+extern int tErr;
+
+/**
+ * 检查树的类型结构
+ * 
+ * @return 错误类型的数量
+ */
+int TreeNode::checkType()
+{
+    
+}
 
 /**
  * 生成节点ID（nodeID）
+ * 
+ * @param id 当前节点ID起始位置
  * 
  * @return int 子树最大ID
  */
@@ -15,7 +29,12 @@ int TreeNode::genNodeId(int id)
         //int p = -1;
         int p = find(varName);
         if (p == -1)
+        {
             nodeID = id++;
+            pair<TreeNode*, string> 
+            p = make_pair(parent, varName);
+            idt.insert(make_pair(p, this));
+        }
         else
             nodeID = p;
     }  
@@ -250,12 +269,6 @@ void TreeNode::addSibling(TreeNode* rsib)
 
 void TreeNode::printAST()
 {
-    if (nodeType == NODE_VAR)
-    {
-        pair<TreeNode*, string> 
-        p = make_pair(parent, varName);
-        idt.insert(make_pair(p, this));
-    }
     printNodeInfo();
     printSpecialInfo();
     TreeNode* p;
@@ -271,15 +284,11 @@ void TreeNode::printRe()
 {
     TreeNode* p;
     p = child;
-    if (p != nullptr) {
-        while (p->rsib != nullptr) p = p->rsib;
-        p->printRe();
-    }
-    printNodeInfo();
-    printSpecialInfo();
-    p = lsib;
     if (p != nullptr) p->printRe();
-
+    printNodeInfo();
+    printSpecialInfo(); 
+    p = rsib;
+    if (p != nullptr) p->printRe();
 }
 
 void TreeNode::printChildrenId()

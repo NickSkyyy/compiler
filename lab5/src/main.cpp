@@ -7,6 +7,7 @@ extern int yyparse();
 extern TreeNode* root;
 
 map<pair<TreeNode*, string>, TreeNode*> idt;
+int tErr = 0;   // 错误类型数量
 
 void printIdt()
 {
@@ -50,11 +51,16 @@ int main(int argc, char* argv[])
     yyparse();
     if (root != NULL) 
     {
-        root->genNodeId(0);
         printInfo(argv);
-        root->printAST();
-        //root->printRe();
-        printIdt();
+        root->genNodeId(0);   
+        root->checkType();
+        if (tErr == 0)
+        {
+            root->printAST();
+            // root->printRe();
+            printIdt();
+        }
+        
     }
     return 0;
 }

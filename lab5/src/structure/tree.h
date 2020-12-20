@@ -54,21 +54,21 @@ enum StmtType
 struct TreeNode
 {
 public:
-    bool bval;  // 布尔
-    char cval;  // 字符
-    int ival;   // 整型
+    bool bval = 0;    // 布尔
+    char cval = ' ';  // 字符
+    int ival = 0;     // 整型
     int lineNo; // 行号
     int nodeID; // 节点号
     NodeType nodeType;  // 节点类型
     OpType opType;      // 操作符类型
     StmtType stmtType;  // 语句类型
-    string sval;        // 字符串
+    string sval = "";   // 字符串
     string varName;     // 变量名
     TreeNode* child = nullptr;      // 孩子指针
     TreeNode* parent = nullptr;     // 父亲节点（符号表）
     TreeNode* lsib = nullptr;       // 左兄弟
     TreeNode* rsib = nullptr;       // 右兄弟
-    Type* type;                     // 类型
+    Type* type = nullptr;           // 类型
     
 public:
     bool operator <(const TreeNode b) const
@@ -81,6 +81,7 @@ public:
         }
         return nodeID < b.nodeID;
     };
+    int checkType();
     int find(string name);
     int genNodeId(int id);
     static string nodeType2Str(NodeType type);
