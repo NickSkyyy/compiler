@@ -4,4 +4,7 @@
 .vscode
 flex-bison-example/
 lab5-sample2/
+lab5/out/
+lab5/tests/
+result.txt
 test.c
