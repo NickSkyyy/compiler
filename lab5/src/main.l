@@ -16,14 +16,14 @@
     int htod(string s)
     {
         int sum = 0;
-        for (int i = 2; i < s.length(); i++)
+        for (int i = 2; i < (int)s.length(); i++)
             sum = sum * 16 + hex(s[i]);
         return sum;
     }
     int otod(string s)
     {
         int sum = 0;
-        for (int i = 1;i < s.length(); i++)
+        for (int i = 1;i < (int)s.length(); i++)
             sum = sum * 8 + (s[i] - '0');
         return sum;
     }
@@ -61,7 +61,7 @@ rparentheses       ")"
 
 AND         "&&"
 ASS         "="
-CHAR        \'.?\'
+CHAR        \'([^\\]|\\.)\'
 COMA        ","
 DIV         "/"
 DIVE        "/="
@@ -199,7 +199,10 @@ STR         \".*\"
 {CHAR} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_CHAR;
-    node->cval = yytext[1];
+    if (strcmp(yytext, "'\\n'") == 0)
+        node->cval = '\n';
+    else
+        node->cval = yytext[1];
     yylval = node;
     return CHAR;
 }
@@ -211,6 +214,7 @@ STR         \".*\"
 {ID} {
     TreeNode* node = new TreeNode(lineNo, NODE_VAR);
     node->varName = string(yytext);
+    node->type = new Type(NOT_SURE);
     yylval = node;
     return ID;
 }
@@ -255,7 +259,7 @@ STR         \".*\"
 {STR} {
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_STRING;
-    for (int i = 1; i < strlen(yytext) - 1; i++)
+    for (int i = 1; i < (int)strlen(yytext) - 1; i++)
         node->sval += yytext[i];
     yylval = node;
     return STRING;

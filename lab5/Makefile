@@ -30,6 +30,10 @@ clean:
 idt:
 	./bin/main.out tests/idt.c > ./out/idt.txt
 
+test:
+	gcc -m32 ./out/test.s -o ./out/test.out
+	qemu-i386 ./out/test.out
+
 test5:
 	./bin/main.out tests/test_lab5.c > ./out/test_lab5.txt
 

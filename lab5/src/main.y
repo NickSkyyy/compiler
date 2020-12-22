@@ -5,6 +5,10 @@
     extern int tErr;
     int yylex();
     int yyerror(char const*);
+    bool isNTS(Type* t)
+    {
+        return t->type == NOT_SURE;
+    }
 %}
 
 // OPs
@@ -35,10 +39,21 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_ASS CHAR {
@@ -46,17 +61,39 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_ASS CHAR_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
-    node->type = $1->type;
-    node->addChild($1);    
+    node->type = TYPE_CHAR;
+    node->addChild($1); 
+    if (*($1->type) != *(node->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;   
     $$ = node;
 }
 | Lval T_ASS Exp {
@@ -64,17 +101,39 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_ASS INT_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
-    node->type = $1->type;
+    node->type = TYPE_INT;
     node->addChild($1);
+    if (*($1->type) != *(node->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_ASS STRING {
@@ -82,67 +141,144 @@ Assign
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_ASS STR_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
-    node->type = $1->type;
+    node->type = TYPE_STRING;
     node->addChild($1);
+    if (*($1->type) != *(node->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_DIVE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_DIVE;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_MINE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MINE;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_MODE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MODE;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_MULE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_MULE;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 | Lval T_PLUE Exp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_PLUE;
-    node->type = $1->type;
+    node->type = $3->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot match type <";
+        cout << $3->type->getTypeInfo() << "> ";
+        cout << "to identifier <";
+        cout << $1->varName << ">" << endl;
+    }
+    else
+        $1->type = $3->type;
     $$ = node;
 }
 ;
@@ -204,9 +340,6 @@ ConstDecl
     node->stmtType = STMT_DECL;
     node->addChild($1);
     node->addChild($2);
-    node->addChild($3);
-    node->addChild($4);
-    $$ = node;
     if (*($2->type) != *($3->type))
     {
         tErr++;
@@ -216,7 +349,15 @@ ConstDecl
         cout << "to identifier <";
         cout << $3->child->varName << ">" << endl;
     }
-    TreeNode* p = $4;
+    else
+    {
+        $3->type = $2->type;
+        $3->child->isConst = true;
+    }  
+    node->addChild($3);
+    node->addChild($4);
+    $$ = node;
+    TreeNode* &p = $4;
     while (p != nullptr)
     {
         if (*($2->type) != *(p->type))
@@ -227,6 +368,11 @@ ConstDecl
             cout << $2->type->getTypeInfo() << "> ";
             cout << "to identifier <";
             cout << p->child->varName << ">" << endl;
+        }
+        else
+        {
+            p->type = $2->type;
+            p->child->isConst = true;
         }
         p = p->rsib;
     }
@@ -287,6 +433,16 @@ EqExp
     node->opType = OP_EQ;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    node->type = $1->type;
     $$ = node;
 }
 | EqExp T_NOTE RelExp {
@@ -294,6 +450,16 @@ EqExp
     node->opType = OP_NOTE;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    node->type = $1->type;
     $$ = node;
 }
 | RelExp {
@@ -397,6 +563,25 @@ HighExp
     node->opType = OP_DIV;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 | HighExp T_MOD UnaryExp {
@@ -404,6 +589,25 @@ HighExp
     node->opType = OP_MOD;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 | HighExp T_MUL UnaryExp {
@@ -411,6 +615,25 @@ HighExp
     node->opType = OP_MUL;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 } 
 | UnaryExp {
@@ -483,6 +706,16 @@ LAndExp
     node->opType = OP_AND;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    node->type = $1->type;
     $$ = node;
 }
 ;
@@ -496,6 +729,16 @@ LOrExp
     node->opType = OP_OR;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    node->type = $1->type;
     $$ = node;
 }
 ;
@@ -509,6 +752,25 @@ LowExp
     node->opType = OP_PLUS;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 | LowExp T_MINS HighExp {
@@ -516,6 +778,25 @@ LowExp
     node->opType = OP_MINS;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 ;
@@ -550,6 +831,25 @@ RelExp
     node->opType = OP_LA;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 | RelExp T_LAE LowExp {
@@ -557,6 +857,25 @@ RelExp
     node->opType = OP_LAE;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 | RelExp T_LE LowExp {
@@ -564,6 +883,25 @@ RelExp
     node->opType = OP_LE;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 | RelExp T_LEE LowExp {
@@ -571,6 +909,25 @@ RelExp
     node->opType = OP_LEE;
     node->addChild($1);
     node->addChild($3);
+    if (*($1->type) != *($3->type))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "cannot calculate type <";
+        cout << $1->type->getTypeInfo() << "> ";
+        cout << "with <";
+        cout << $3->type->getTypeInfo() << ">" << endl;
+    }
+    if (!isNTS($1->type))
+    {
+        $3->type = $1->type;
+        node->type = $1->type;
+    }
+    else
+    {
+        $1->type = $3->type;
+        node->type = $3->type;   
+    }
     $$ = node;
 }
 ;
@@ -650,6 +1007,7 @@ UnaryExp
 | UnaryOp UnaryExp {
     TreeNode* node = new TreeNode($1->lineNo, NODE_EXPR);
     node->opType = $1->opType;
+    node->type = $2->type;
     node->addChild($2);
     $$ = node;
 }
@@ -690,7 +1048,9 @@ VarDecl
         cout << "to identifier <";
         cout << $2->child->varName << ">" << endl;
     }
-    TreeNode* p = $3;
+    else
+        $2->type = $1->type;
+    TreeNode* &p = $3;
     while (p != nullptr)
     {
         if (*($1->type) != *(p->type))
@@ -702,6 +1062,8 @@ VarDecl
             cout << "to identifier <";
             cout << p->child->varName << ">" << endl;
         }
+        else
+            p->type = $1->type;
         p = p->rsib;
     }
 }
@@ -709,7 +1071,6 @@ VarDecl
 
 VarDef
 : ID {
-    $1->type = new Type(NOT_SURE);
     $$ = $1;
 }
 | ID T_ASS VarInitVal {

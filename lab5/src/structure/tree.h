@@ -55,6 +55,7 @@ struct TreeNode
 {
 public:
     bool bval = 0;    // 布尔
+    bool isConst = 0; // 是否为常量
     char cval = ' ';  // 字符
     int ival = 0;     // 整型
     int lineNo; // 行号
@@ -63,7 +64,7 @@ public:
     OpType opType;      // 操作符类型
     StmtType stmtType;  // 语句类型
     string sval = "";   // 字符串
-    string varName;     // 变量名
+    string varName = "";     // 变量名
     TreeNode* child = nullptr;      // 孩子指针
     TreeNode* parent = nullptr;     // 父亲节点（符号表）
     TreeNode* lsib = nullptr;       // 左兄弟
@@ -90,7 +91,7 @@ public:
     TreeNode(int lineNo, NodeType type);   
     void addChild(TreeNode*);
     void addSibling(TreeNode*); 
-    void genIdt();
+    void genCode(ofstream &os);
     void printAST();
     void printRe();
     void printChildrenId();

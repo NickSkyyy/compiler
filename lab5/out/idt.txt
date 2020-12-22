@@ -1,0 +1,28 @@
++--------------------------+
+- Source file: tests/idt.c -
++--------------------------+
+
+lno@0    @0    program        children: [ @1 @7 ]
+lno@1    @1    statement      children: [ @2 @3 @4 ]
+               stmt: declaration
+lno@1    @2    key            key: const
+lno@1    @3    type           type: integer
+lno@1    @4    statement      children: [ @5 @6 ]
+               stmt: assign
+lno@1    @5    variable       varname: MAXN
+lno@1    @6    const          value: 100
+
+lno@2    @7    program        children: [ @8 @9 @10 ]
+lno@2    @8    type           type: integer
+lno@2    @9    key            key: main
+lno@2    @10   statement      children: [ @11 @13 ]
+               stmt: block
+lno@2    @11   statement      children: [ @12 ]
+               stmt: i/o
+lno@4    @12   const          value: 100
+lno@4    @13   statement      children: [ @14 ]
+               stmt: i/o
+lno@5    @14   const          value: \n
+
+++ idt map ++
+MAXN : integer(@5, @4) const

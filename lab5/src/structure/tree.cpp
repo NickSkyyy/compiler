@@ -4,6 +4,10 @@
 /* 符号表：{<父亲节点，变量名>: 节点} */
 extern map<pair<TreeNode*, string>, TreeNode*> idt;
 extern int tErr;
+// 类型检查标记位
+bool isDecl, isLv, isLval;
+// 代码生成标记位
+bool isMain;
 
 /**
  * 检查树的类型结构
@@ -12,7 +16,7 @@ extern int tErr;
  */
 int TreeNode::checkType()
 {
-    
+    return 0;
 }
 
 /**
@@ -26,17 +30,52 @@ int TreeNode::genNodeId(int id)
 {
     if (nodeType == NODE_VAR)
     {
-        //int p = -1;
+        isDecl = false, isLv = false;
+        if (parent != nullptr && 
+            parent->nodeType == NODE_STMT &&
+            parent->stmtType == STMT_ASS &&
+            parent->child == this)
+            isLval = true;
+        else
+            isLval = false;
         int p = find(varName);
-        if (p == -1)
+        if (p == 0)
         {
+            // new id
             nodeID = id++;
             pair<TreeNode*, string> 
             p = make_pair(parent, varName);
-            idt.insert(make_pair(p, this));
+            idt.insert(make_pair(p, this)); 
+        }
+        else if (p == -1)
+        {
+            // not declared
+            nodeID = id++;
+            tErr++;
+            cout << "error @" << lineNo << ": ";
+            cout << "identifier " << varName;
+            cout << " not declared" << endl;    
+        }
+        else if (p == -2)
+        {
+            // duplicated
+            nodeID = id++;
+            tErr++;
+            cout << "error @" << lineNo << ": ";
+            cout << "identifier " << varName;
+            cout << " duplicated" << endl;  
+        }
+        else if (p == -3)
+        {
+            // const lval
+            nodeID = id++;
+            tErr++;
+            cout << "error @" << lineNo << ": ";
+            cout << "const " << varName;
+            cout << " cannot be lval" << endl;  
         }
         else
-            nodeID = p;
+            nodeID = p;         
     }  
     else
         nodeID = id++;
@@ -45,7 +84,11 @@ int TreeNode::genNodeId(int id)
     p = child;
     if (p != nullptr) id = p->genNodeId(id);
     p = rsib;
-    if (p != nullptr) id = p->genNodeId(id);
+    if (p != nullptr) 
+    {
+        rsib->parent = parent;
+        id = p->genNodeId(id);
+    }
     return id;
 }
 
@@ -165,10 +208,11 @@ TreeNode::TreeNode(int lineNo, NodeType type)
  */
 int TreeNode::find(string name)
 {
-    if (parent != nullptr && 
+    // new id
+    if (parent != nullptr && isLval && 
         parent->nodeType == NODE_STMT &&
         parent->stmtType == STMT_DECL)
-        return -1;
+        isDecl = true;
     // the same level
     TreeNode* p = lsib;
     while (p != nullptr) {
@@ -182,7 +226,10 @@ int TreeNode::find(string name)
                 // variable
                 if (son->nodeType == NODE_VAR &&
                     son->varName == name)
-                    return son->nodeID;
+                {
+                    if (isLval && son->isConst) return -3; 
+                    return isDecl ? -2 : son->nodeID;
+                }    
                 // assign(const, var)
                 if (son->nodeType == NODE_STMT &&
                     son->stmtType == STMT_ASS)
@@ -192,7 +239,10 @@ int TreeNode::find(string name)
                     {
                         if (temp->nodeType == NODE_VAR &&
                             temp->varName == name)
-                            return temp->nodeID;
+                        {
+                            if (isLval && temp->isConst) return -3;
+                            return isDecl ? -2 : temp->nodeID;
+                        }
                         temp = temp->rsib;
                     }
                 }
@@ -202,7 +252,10 @@ int TreeNode::find(string name)
         // variable
         else if (p->nodeType == NODE_VAR &&
                  p->varName == name)
-            return p->nodeID;
+        {
+            if (isLval && p->isConst) return -3;
+            return isDecl ? -2 : p->nodeID;
+        }
         // params
         else if (p->nodeType == NODE_STMT &&
                  p->stmtType == STMT_PARM)
@@ -212,10 +265,14 @@ int TreeNode::find(string name)
             {                
                 TreeNode* node = son->child->rsib;
                 if (node->varName == name)
-                    return node->nodeID;
+                {
+                    if (isLval && node->isConst) return -3;
+                    return isDecl ? -2 : node->nodeID;
+                }
                 son = son->rsib;
             }
         }
+        // IO
         else if (p->nodeType == NODE_STMT &&
                 (p->stmtType == STMT_ASS ||
                  p->stmtType == STMT_IO))
@@ -225,15 +282,24 @@ int TreeNode::find(string name)
             {
                 if (son->nodeType == NODE_VAR &&
                     son->varName == name)
-                    return son->nodeID;
+                {
+                    if (isLval && son->isConst) return -3;
+                    return isDecl ? -2 : son->nodeID;
+                }
                 son = son->rsib;
             }
         }          
         p = p->lsib;
     }
     // check higher level
-    if (parent != nullptr) return parent->find(name);
-    return -1;
+    if (isDecl && !isLv)
+    {
+        isLv = true;
+        return parent->find(name);
+    }   
+    if (isDecl && isLv) return 0;
+    if (parent != nullptr) return parent->find(name);     
+    return isDecl ? 0 : -1;
 }
 
 void TreeNode::addChild(TreeNode* child)
@@ -265,6 +331,109 @@ void TreeNode::addSibling(TreeNode* rsib)
         p->rsib = rsib;
         rsib->lsib = p;
     }
+}
+
+void TreeNode::genCode(ofstream &os)
+{
+    if (nodeType == NODE_STMT &&
+        stmtType == STMT_IO)
+    {
+        switch (child->type->type)
+        {
+        case VALUE_CHAR:
+            if (child->nodeType == NODE_VAR)
+            {
+                    
+            }
+            else if (child->nodeType == NODE_CONST)
+            {
+                os << "\t# printf\n";
+                os << "\tmovl\t$" << (int)child->cval;
+                os << ", %eax\n";
+                os << "\tpushl\t%eax\n";
+                os << "\tpushl\t$_CHAR\n";
+                os << "\tcall\tprintf\n";
+                os << "\taddl\t$8, %esp\n";
+            }
+            break;
+        case VALUE_INT:
+            if (child->nodeType == NODE_VAR)
+            {
+                    
+            }
+            else if (child->nodeType == NODE_CONST)
+            {
+                os << "\t# printf\n";
+                os << "\tmovl\t$" << child->ival;
+                os << ", %eax\n";
+                os << "\tpushl\t%eax\n";
+                os << "\tpushl\t$_INT\n";
+                os << "\tcall\tprintf\n";
+                os << "\taddl\t$8, %esp\n";
+            }
+            break;
+            
+        default:
+            break;
+        }
+    }
+    else if (nodeType == NODE_STMT &&
+             stmtType == STMT_DECL)
+    {
+        if (isMain)
+        {
+
+        }
+        else
+        {
+            TreeNode* p = child;
+            while (p != nullptr)
+            {
+                
+                p = p->rsib;
+            }
+        }
+    }
+    else if (nodeType == NODE_PROG &&
+             child->rsib->varName == "main")
+    {
+        isMain = true;
+        os << "\t.text\n";
+        os << "\t.globl\tmain\n";
+        os << "\t.type\tmain, @function\n";
+        os << "main:\n";
+        os << "\tpushl\t%ebp\n";
+        os << "\tpushl\t%eax\n";
+        os << "\tmovl\t%esp, %ebp\n";
+        child->rsib->rsib->genCode(os);
+        os << ".END:\n";
+        os << "\tmovl\t%ebp, %esp\n";
+        os << "\tpopl\t%eax\n";
+        os << "\tpopl\t%ebp\n";
+        os << "\tmovl\t$0, %eax\n";
+        os << "\tret\n";
+    }
+    else
+    {
+        if (nodeType == NODE_PROG)
+        {
+            if (child->rsib->varName == "")
+            {
+                // start
+                os << "\t.section\t.rodata\n";
+                os << "_CHAR:\n";
+                os << "\t.string\t\"%c\"\n";
+                os << "_INT:\n";
+                os << "\t.string\t\"%d\"\n";
+                os << "_STRING:\n";
+                os << "\t.string\t\"%s\"\n";
+                isMain = false;
+            }
+        }
+        if (child != nullptr) child->genCode(os);
+    }
+    // next stmt
+    if (rsib != nullptr) rsib->genCode(os);  
 }
 
 void TreeNode::printAST()
@@ -329,7 +498,10 @@ void TreeNode::printSpecialInfo()
             cout << bval;
             break;
         case VALUE_CHAR:
-            cout << cval;
+            if (cval == '\n')
+                cout << "\\n";
+            else
+                cout << cval;
             break;
         case VALUE_INT:
             cout << ival;

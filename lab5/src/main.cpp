@@ -6,34 +6,36 @@ extern FILE* yyin;
 extern int yyparse();
 extern TreeNode* root;
 
-map<pair<TreeNode*, string>, TreeNode*> idt;
 int tErr = 0;   // 错误类型数量
+map<pair<TreeNode*, string>, TreeNode*> idt;
+
 
 void printIdt()
 {
-    cout << "++ idt map ++" << endl;
+    cout << "\n++ idt map ++\n";
     for (auto &it : idt)
     {
         pair<TreeNode*, string> p = it.first;
         TreeNode* parent = p.first;
         string name = p.second;
         TreeNode* myself = it.second;
-        cout << "var: " << name << " ";
+        cout << name << " : " << myself->type->getTypeInfo();
         cout << "(@" << myself->nodeID;
-        cout << ", @" << parent->nodeID << ")" << endl;
+        cout << ", @" << parent->nodeID << ") ";
+        cout << (myself->isConst ? "const" : "var") << endl;
     }
 }
 
 void printInfo(char* argv[])
 {
     cout << "+--------------";
-    for (int i = 0; i <= strlen(argv[1]); i++)
+    for (int i = 0; i <= (int)strlen(argv[1]); i++)
         cout << "-";
     cout << "+" << endl;
     cout << "- Source file: " << argv[1];
     cout << " -" << endl;
     cout << "+--------------";
-    for (int i = 0; i <= strlen(argv[1]); i++)
+    for (int i = 0; i <= (int)strlen(argv[1]); i++)
         cout << "-";
     cout << "+" << endl;
 }
@@ -54,13 +56,15 @@ int main(int argc, char* argv[])
         printInfo(argv);
         root->genNodeId(0);   
         root->checkType();
-        if (tErr == 0)
+        if (1)
         {
             root->printAST();
-            // root->printRe();
             printIdt();
-        }
-        
+            ofstream os("./out/test.s"); 
+            root->genCode(os);
+            os << "\t.section\t.note.GNU-stack,\"\",@progbits";
+            os.close();
+        }      
     }
     return 0;
 }

@@ -75,15 +75,15 @@ string Type::getTypeInfo()
 
 void Type::addChild(Type* t)
 {
-
+    if (t == nullptr) return;
 }
 
 void Type::addParam(Type* t)
 {
-
+    if (t == nullptr) return;
 }
 
 void Type::addRet(Type* t)
 {
-
+    if (t == nullptr) return;
 }
