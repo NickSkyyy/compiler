@@ -389,7 +389,11 @@ void TreeNode::genCode(ofstream &os)
             TreeNode* p = child;
             while (p != nullptr)
             {
-                
+                if (p->nodeType == NODE_STMT &&
+                    p->stmtType == STMT_ASS)
+                {
+                    
+                }
                 p = p->rsib;
             }
         }
