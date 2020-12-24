@@ -36,6 +36,8 @@
 Assign
 : Lval T_ASS BOOL {
     $1->bval = $3->bval;
+    $1->ival = $3->bval ? 1 : 0;
+    $1->cval = (char)$1->ival;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
@@ -58,6 +60,8 @@ Assign
 }
 | Lval T_ASS CHAR {
     $1->cval = $3->cval;
+    $1->ival = (int)$1->cval;
+    $1->bval = $1->ival == 0 ? 0 : 1;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_ASS;
     node->opType = OP_ASS;
@@ -81,6 +85,7 @@ Assign
 | Lval T_ASS CHAR_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "input";
     node->type = TYPE_CHAR;
     node->addChild($1); 
     if (*($1->type) != *(node->type))
@@ -121,6 +126,7 @@ Assign
 | Lval T_ASS INT_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "input";
     node->type = TYPE_INT;
     node->addChild($1);
     if (*($1->type) != *(node->type))
@@ -161,6 +167,7 @@ Assign
 | Lval T_ASS STR_IN LPATH RPATH {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "input";
     node->type = TYPE_STRING;
     node->addChild($1);
     if (*($1->type) != *(node->type))
@@ -468,7 +475,10 @@ EqExp
 ;
 
 Exp
-: LowExp {
+: Cond {
+    $$ = $1;
+}
+| LowExp {
     $$ = $1;
 }
 ;
@@ -662,36 +672,45 @@ IO
 : CHAR_OUT LPATH CHAR RPATH SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "output";
     node->addChild($3);
     $$ = node;
 }
 | CHAR_OUT LPATH ID RPATH SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "output";
+    $3->type = TYPE_CHAR;
     node->addChild($3);
     $$ = node;    
 }
 | CHAR_OUT LPATH INT RPATH SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "output";
+    $3->type = TYPE_CHAR;
     node->addChild($3);
     $$ = node;    
 }
 | INT_OUT LPATH Exp RPATH SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "output";
+    $3->type = TYPE_INT;
     node->addChild($3);
     $$ = node;
 }
 | STR_OUT LPATH ID RPATH SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "output";
     node->addChild($3);
     $$ = node;
 }
 | STR_OUT LPATH STRING RPATH SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_IO;
+    node->varName = "output";
     node->addChild($3);
     $$ = node;
 }

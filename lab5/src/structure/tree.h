@@ -91,6 +91,7 @@ public:
     TreeNode(int lineNo, NodeType type);   
     void addChild(TreeNode*);
     void addSibling(TreeNode*); 
+    void cpFrom(TreeNode* node);
     void genCode(ofstream &os);
     void printAST();
     void printRe();

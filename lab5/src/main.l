@@ -98,9 +98,17 @@ STR         \".*\"
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_BOOL;
     if (strcmp(yytext, "True") == 0)
+    {
         node->bval = true;
+        node->ival = 1;
+        node->cval = (char)node->ival;
+    }
     else if (strcmp(yytext, "False") == 0)
+    {
         node->bval = false;
+        node->ival = 0;
+        node->cval = (char)node->ival;
+    }
     yylval = node;
     return BOOL;
 }
@@ -203,6 +211,8 @@ STR         \".*\"
         node->cval = '\n';
     else
         node->cval = yytext[1];
+    node->ival = (int)node->cval;
+    node->bval = node->ival == 0 ? 0 : 1;
     yylval = node;
     return CHAR;
 }
@@ -234,6 +244,8 @@ STR         \".*\"
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_INT;
     node->ival = atoi(yytext);
+    node->cval = (char)node->ival;
+    node->bval = node->ival == 0 ? 0 : 1;
     yylval = node;
     return INT;
 }
@@ -241,6 +253,8 @@ STR         \".*\"
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_INT;
     node->ival = htod(yytext);
+    node->cval = (char)node->ival;
+    node->bval = node->ival == 0 ? 0 : 1;
     yylval = node;
     return INT;
 }
@@ -248,6 +262,8 @@ STR         \".*\"
     TreeNode* node = new TreeNode(lineNo, NODE_CONST);
     node->type = TYPE_INT;
     node->ival = otod(yytext);
+    node->cval = (char)node->ival;
+    node->bval = node->ival == 0 ? 0 : 1;
     yylval = node;
     return INT;
 }

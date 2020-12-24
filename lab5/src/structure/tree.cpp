@@ -3,6 +3,7 @@
 
 /* 符号表：{<父亲节点，变量名>: 节点} */
 extern map<pair<TreeNode*, string>, TreeNode*> idt;
+extern map<int, TreeNode*> id2id;
 extern int tErr;
 // 类型检查标记位
 bool isDecl, isLv, isLval;
@@ -46,6 +47,7 @@ int TreeNode::genNodeId(int id)
             pair<TreeNode*, string> 
             p = make_pair(parent, varName);
             idt.insert(make_pair(p, this)); 
+            id2id.insert(make_pair(nodeID, this));
         }
         else if (p == -1)
         {
@@ -74,8 +76,8 @@ int TreeNode::genNodeId(int id)
             cout << "const " << varName;
             cout << " cannot be lval" << endl;  
         }
-        else
-            nodeID = p;         
+        else    // right identifier
+            cpFrom(id2id.at(p));      
     }  
     else
         nodeID = id++;
@@ -204,12 +206,12 @@ TreeNode::TreeNode(int lineNo, NodeType type)
 /**
  * 寻找正确ID（符号表）
  * 
- * @return int 正确的ID位置
+ * @return TreeNode* 正确的节点类型
  */
 int TreeNode::find(string name)
 {
     // new id
-    if (parent != nullptr && isLval && 
+    if (parent != nullptr && 
         parent->nodeType == NODE_STMT &&
         parent->stmtType == STMT_DECL)
         isDecl = true;
@@ -333,9 +335,202 @@ void TreeNode::addSibling(TreeNode* rsib)
     }
 }
 
+void TreeNode::cpFrom(TreeNode* node)
+{
+    bval = node->bval;
+    cval = node->cval;
+    isConst = node->isConst;
+    ival = node->ival;
+    sval = node->sval;
+    nodeID = node->nodeID;
+    nodeType = node->nodeType;
+    varName = node->varName;
+    type = node->type;
+}
+
 void TreeNode::genCode(ofstream &os)
 {
-    if (nodeType == NODE_STMT &&
+    if (nodeType == NODE_EXPR)
+    {
+        TreeNode* first = child;
+        TreeNode* second = child->rsib;
+        if (second == nullptr)
+        {
+            // unaryExp
+            switch (opType)
+            {
+            case OP_MINS:
+                if (first->nodeType == NODE_CONST)
+                    os << "\tpushl\t$" << (-1) * first->ival << endl;
+                else if (first->nodeType == NODE_VAR)
+                {
+                    os << "\tmovl\t" << first->varName;
+                    os << ", %eax\n";
+                    os << "\timull\t$-1\n";
+                    os << "\tpushl\t%eax\n"; 
+                } 
+                break;
+            case OP_NOT:
+                if (first->nodeType == NODE_CONST)
+                {
+                    os << "\tpushl\t$";
+                    os << (first->ival == 0 ? 1 : 0) << endl;
+                }
+                else if (first->nodeType == NODE_VAR)
+                {
+                    os << "\tmovl\t" << first->varName;
+                    os << ", %eax\n";
+                    
+                } 
+                break;
+            case OP_PLUS:
+                if (first->nodeType == NODE_CONST)
+                    os << "\tpushl\t$" << first->ival << endl;
+                else if (first->nodeType == NODE_VAR)
+                    os << "\tpushl\t" << first->varName << endl; 
+                break;
+            default:
+                break;
+            }
+            return;
+        }
+        if (first->nodeType != NODE_EXPR &&
+            second->nodeType != NODE_EXPR)
+        {
+            if (first->nodeType == NODE_CONST)
+            {
+                os << "\tmovl\t$" << first->ival;
+                os << ", %eax\n";
+            }
+            else if (first->nodeType == NODE_VAR)
+            {
+                os << "\tmovl\t" << first->varName;
+                os << ", %eax\n";
+            }
+            switch (opType)
+            {
+            case OP_DIV:
+                os << "\tmovl\t$0, %edx\n";
+                if (second->nodeType == NODE_CONST)
+                    os << "\tidivl\t$" << second->ival << endl;
+                else if (second->nodeType == NODE_VAR)
+                    os << "\tidivl\t" << second->varName << endl;
+                os << "\tpushl\t%eax\n";
+                break;
+            case OP_MINS:               
+                if (second->nodeType == NODE_CONST)
+                {
+                    os << "\tsubl\t$" << second->ival;
+                    os << ", %eax\n";
+                }
+                else if (second->nodeType == NODE_VAR)
+                {
+                    os << "\tsubl\t" << second->varName;
+                    os << ", %eax\n";
+                }
+                os << "\tpushl\t%eax\n";
+                break;
+            case OP_MOD:
+                os << "\tmovl\t$0, %edx\n";
+                if (second->nodeType == NODE_CONST)
+                    os << "\tidivl\t$" << second->ival << endl;
+                else if (second->nodeType == NODE_VAR)
+                    os << "\tidivl\t" << second->varName << endl;
+                os << "\tpushl\t%edx\n"; 
+                break;
+            case OP_MUL:
+                if (second->nodeType == NODE_CONST)
+                    os << "\timull\t$" << second->ival << endl;
+                else if (second->nodeType == NODE_VAR)
+                    os << "\timull\t" << second->varName << endl;
+                os << "\tpushl\t%eax\n";
+                break;
+            case OP_PLUS:
+                if (second->nodeType == NODE_CONST)
+                {
+                    os << "\taddl\t$" << second->ival;
+                    os << ", %eax\n";
+                }
+                else if (second->nodeType == NODE_VAR)
+                {
+                    os << "\taddl\t" << second->varName;
+                    os << ", %eax\n";
+                }
+                os << "\tpushl\t%eax\n";
+                break;
+            default:
+                break;
+            }
+            return;
+        }
+        switch (first->nodeType)
+        {
+        case NODE_CONST:  
+            os << "\tpushl\t$" << first->ival << endl;        
+            break;
+        case NODE_EXPR:
+            first->genCode(os);
+            break;
+        case NODE_VAR:
+            os << "\tpushl\t" << first->varName << endl;  
+            break;
+        default:
+            break;
+        }
+        switch (second->nodeType)
+        {
+        case NODE_CONST:  
+            os << "\tpushl\t$" << second->ival << endl;        
+            break;
+        case NODE_EXPR:
+            second->genCode(os);
+            break;
+        case NODE_VAR:
+            os << "\tpushl\t" << second->varName << endl;  
+            break;
+        default:
+            break;
+        }
+        switch (opType)
+        {
+        case OP_DIV:
+            os << "\tpopl\t%ecx\n";
+            os << "\tpopl\t%eax\n";
+            os << "\tmovl\t$0, %edx\n";
+            os << "\tidivl\t%ecx\n";               
+            os << "\tpushl\t%eax\n";
+            break;
+        case OP_MINS:         
+            os << "\tpopl\t%edx\n";
+            os << "\tpopl\t%eax\n";     
+            os << "\tsubl\t%edx, %eax\n";
+            os << "\tpushl\t%eax\n";
+            break;
+        case OP_MOD:
+            os << "\tpopl\t%ecx\n";
+            os << "\tpopl\t%eax\n";
+            os << "\tmovl\t$0, %edx\n";
+            os << "\tidivl\t%ecx\n";               
+            os << "\tpushl\t%edx\n";
+            break;
+        case OP_MUL:
+            os << "\tpopl\t%ecx\n";
+            os << "\tpopl\t%eax\n";
+            os << "\timull\t%ecx\n";               
+            os << "\tpushl\t%eax\n";
+            break;
+        case OP_PLUS:
+            os << "\tpopl\t%edx\n";
+            os << "\tpopl\t%eax\n";     
+            os << "\tsubl\t%edx, %eax\n";
+            os << "\tpushl\t%eax\n";
+            break;
+        default:
+            break;
+        }
+        return;
+    }
+    else if (nodeType == NODE_STMT &&
         stmtType == STMT_IO)
     {
         switch (child->type->type)
@@ -343,7 +538,24 @@ void TreeNode::genCode(ofstream &os)
         case VALUE_CHAR:
             if (child->nodeType == NODE_VAR)
             {
-                    
+                if (varName == "input")
+                {
+                    os << "\t# scanf\n";
+                    os << "\tpushl\t$" << child->varName << endl;
+                    os << "\tpushl\t$_CHAR2\n";
+                    os << "\tcall\tscanf\n";
+                    os << "\taddl\t$8, %esp\n";
+                }   
+                else
+                {
+                    os << "\t# printf\n";
+                    os << "\tmovl\t" << child->varName;
+                    os << ", %eax\n";
+                    os << "\tpushl\t%eax\n";
+                    os << "\tpushl\t$_CHAR\n";
+                    os << "\tcall\tprintf\n";
+                    os << "\taddl\t$8, %esp\n";
+                }   
             }
             else if (child->nodeType == NODE_CONST)
             {
@@ -359,7 +571,24 @@ void TreeNode::genCode(ofstream &os)
         case VALUE_INT:
             if (child->nodeType == NODE_VAR)
             {
-                    
+                if (varName == "input")
+                {
+                    os << "\t# scanf\n";
+                    os << "\tpushl\t$" << child->varName << endl;
+                    os << "\tpushl\t$_INT\n";
+                    os << "\tcall\tscanf\n";
+                    os << "\taddl\t$8, %esp\n";
+                }   
+                else
+                {
+                    os << "\t# printf\n";
+                    os << "\tmovl\t" << child->varName;
+                    os << ", %eax\n";
+                    os << "\tpushl\t%eax\n";
+                    os << "\tpushl\t$_INT\n";
+                    os << "\tcall\tprintf\n";
+                    os << "\taddl\t$8, %esp\n";
+                }  
             }
             else if (child->nodeType == NODE_CONST)
             {
@@ -371,8 +600,7 @@ void TreeNode::genCode(ofstream &os)
                 os << "\tcall\tprintf\n";
                 os << "\taddl\t$8, %esp\n";
             }
-            break;
-            
+            break;           
         default:
             break;
         }
@@ -389,10 +617,66 @@ void TreeNode::genCode(ofstream &os)
             TreeNode* p = child;
             while (p != nullptr)
             {
-                if (p->nodeType == NODE_STMT &&
-                    p->stmtType == STMT_ASS)
+                if (p->nodeType == NODE_VAR)
                 {
-                    
+                    os << "\t.comm\t" << p->varName;
+                    switch (p->type->type)
+                    {
+                    case VALUE_CHAR:
+                        os << ",1,1\n";    
+                        break;
+                    case VALUE_INT:
+                        os << ",4,4\n";
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else if (p->nodeType == NODE_STMT &&
+                         p->stmtType == STMT_ASS)
+                {
+                    TreeNode* tid = p->child;
+                    os << "\t.globl\t" << tid->varName << endl;
+                    if (child->varName == "const")
+                        os << "\t.section\t.rodata\n";
+                    else
+                        os << "\t.data\n";
+                    if (tid->type->type == VALUE_INT)
+                        os << "\t.align 4\n";
+                    os << "\t.type\t" << tid->varName;
+                    os << ", @object\n";
+                    os << "\t.size\t" << tid->varName;
+                    switch (tid->type->type)
+                    {
+                    case VALUE_CHAR:
+                        os << ", 1\n";
+                        break;
+                    case VALUE_INT:
+                        os << ", 4\n";
+                        break;
+                    default:
+                        break;
+                    }
+                    os << tid->varName << ":\n";
+                    tid = tid->rsib;
+                    if (tid->nodeType == NODE_CONST)
+                    {
+                        switch (tid->type->type)
+                        {
+                        case VALUE_CHAR:
+                            os << "\t.byte\t" << (int)tid->cval << endl;
+                            break;
+                        case VALUE_INT:
+                            os << "\t.long\t" << tid->ival << endl;
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                    else    // EXP
+                    {
+
+                    }
                 }
                 p = p->rsib;
             }
@@ -424,6 +708,7 @@ void TreeNode::genCode(ofstream &os)
             if (child->rsib->varName == "")
             {
                 // start
+                os << "\t.text\n";
                 os << "\t.section\t.rodata\n";
                 os << "_CHAR:\n";
                 os << "\t.string\t\"%c\"\n";
@@ -535,7 +820,10 @@ void TreeNode::printSpecialInfo()
         cout << endl;
         for (int i = 0; i < 15; i++) cout << " ";
         cout << "stmt: ";
-        cout << stmtType2Str(stmtType);
+        if (stmtType == STMT_IO)
+            cout << varName;
+        else
+            cout << stmtType2Str(stmtType);
     }
     if (nodeType == NODE_TYPE)
     {

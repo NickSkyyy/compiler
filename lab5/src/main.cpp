@@ -8,7 +8,7 @@ extern TreeNode* root;
 
 int tErr = 0;   // 错误类型数量
 map<pair<TreeNode*, string>, TreeNode*> idt;
-
+map<int, TreeNode*> id2id;
 
 void printIdt()
 {
