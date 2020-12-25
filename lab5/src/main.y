@@ -653,15 +653,20 @@ HighExp
 
 IfRest
 : ELSE IF LPATH Cond RPATH Stmt IfRest {
-    $1->addSibling($2);
-    $1->addSibling($4);
-    $1->addSibling($6);
-    $1->addSibling($7);
-    $$ = $1;
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_COND;
+    node->addChild($1);
+    node->addChild($4);
+    node->addChild($6);
+    node->addChild($7);
+    $$ = node;
 }
 | ELSE Stmt {
-    $1->addSibling($2);
-    $$ = $1;
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_COND;
+    node->addChild($1);
+    node->addChild($2);
+    $$ = node;
 }
 | {
     $$ = nullptr;
@@ -987,11 +992,16 @@ Stmt
 | IF LPATH Cond RPATH Stmt IfRest {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_COND;
-    node->addChild($1);
     node->addChild($3);
     node->addChild($5);
     node->addChild($6);
     $$ = node;
+    if (*($3->type) != *(TYPE_BOOL))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "condition type error" << endl;
+    }
 }
 | IO {
     $$ = $1;
