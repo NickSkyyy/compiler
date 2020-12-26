@@ -1,4 +1,7 @@
-ss: 1.c
+s0: 0.cpp
+	g++ -o 0.s -S -masm=att 0.cpp
+
+s1: 1.c
 	gcc -o 1.s -S -masm=att 1.c
 
 out: 1.c

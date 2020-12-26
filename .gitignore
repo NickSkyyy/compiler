@@ -3,8 +3,8 @@
 *.yy*
 .vscode
 flex-bison-example/
-lab1/1.c
-lab1/1.s
+lab1/*.cpp
+lab1/*.[cs]
 lab5-sample2/
 lab5/out/
 lab5/tests/

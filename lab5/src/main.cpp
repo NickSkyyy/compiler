@@ -4,11 +4,11 @@
 
 extern FILE* yyin;
 extern int yyparse();
+extern map<pair<TreeNode*, string>, TreeNode*> idt;
+extern map<int, TreeNode*> id2id;
 extern TreeNode* root;
 
 int tErr = 0;   // 错误类型数量
-map<pair<TreeNode*, string>, TreeNode*> idt;
-map<int, TreeNode*> id2id;
 
 void printIdt()
 {
@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
             root->printAST();
             printIdt();
             ofstream os("./out/test.s"); 
+            root->genStr(os);
             root->genCode(os);
             os << "\t.section\t.note.GNU-stack,\"\",@progbits";
             os.close();

@@ -88,7 +88,7 @@ PLUE        "+="
 PLUS        "+"
 SEMI        ";"
 SPAC        [ \t]
-STR         \".*\"
+STR         \"[^\"]*\"
 
 %x COMMENT_B
 %x COMMENT_L
