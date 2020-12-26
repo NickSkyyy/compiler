@@ -996,12 +996,6 @@ Stmt
     node->addChild($5);
     node->addChild($6);
     $$ = node;
-    if (*($3->type) != *(TYPE_BOOL))
-    {
-        tErr++;
-        cout << "error @" << $1->lineNo << ": ";
-        cout << "condition type error" << endl;
-    }
 }
 | IO {
     $$ = $1;
@@ -1065,9 +1059,6 @@ VarDecl
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_DECL;
     node->addChild($1);
-    node->addChild($2);
-    node->addChild($3);
-    $$ = node;
     if (*($1->type) != *($2->type))
     {
         tErr++;
@@ -1078,7 +1069,10 @@ VarDecl
         cout << $2->child->varName << ">" << endl;
     }
     else
-        $2->type = $1->type;
+        $2->type = $1->type;          
+    node->addChild($2);
+    node->addChild($3);
+    $$ = node;
     TreeNode* &p = $3;
     while (p != nullptr)
     {

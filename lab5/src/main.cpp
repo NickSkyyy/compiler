@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         printInfo(argv);
         root->genNodeId(0);   
         root->checkType();
-        if (1)
+        if (tErr == 0)
         {
             root->printAST();
             printIdt();
@@ -64,7 +64,9 @@ int main(int argc, char* argv[])
             root->genCode(os);
             os << "\t.section\t.note.GNU-stack,\"\",@progbits";
             os.close();
-        }      
+        }
+        else
+            cout << "error tot: " << tErr << endl;      
     }
     return 0;
 }

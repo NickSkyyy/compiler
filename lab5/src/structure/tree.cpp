@@ -11,7 +11,7 @@ bool isDecl, isLv, isLval;
 bool isMain;
 // 当前标签标识
 int Lson = 0;
-int Lcond = 0, Ltemp = 0;
+int Lcond = 0, Lloop = 0, Ltemp = 0;
 stack<int> L1, L2;
 stack<TreeNode*> noSib;
 
@@ -775,6 +775,18 @@ void TreeNode::genCode(ofstream &os)
             L1.pop();
             Lson = L2.top(), L2.pop();
         } 
+    }
+    else if (nodeType == NODE_STMT &&
+             stmtType == STMT_LOOP)
+    {
+        if (child->varName == "while")
+        {
+
+        }
+        else if (child->varName == "for")
+        {
+            
+        }
     }
     else if (nodeType == NODE_STMT &&
              stmtType == STMT_DECL)
