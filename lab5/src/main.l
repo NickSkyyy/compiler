@@ -54,10 +54,12 @@ lbrace             "{"
 lcb                "/*"
 lcl                "//"
 lparentheses       "("
+lsq                "["
 rbrace             "}"
 rcb                "*/"
 rcl                \n
 rparentheses       ")"
+rsq                "]"
 
 AND         "&&"
 ASS         "="
@@ -197,10 +199,12 @@ STR         \"[^\"]*\"
 {lcb} {BEGIN COMMENT_B;}
 {lcl} {BEGIN COMMENT_L;}
 {lparentheses} {return LPATH;}
+{lsq} {return LSQ;}
 {rbrace} {return RBRAC;}
 <COMMENT_B>{rcb} {BEGIN INITIAL;}
 <COMMENT_L>{rcl} {lineNo++; BEGIN INITIAL;}
 {rparentheses} {return RPATH;}
+{rsq} {return RSQ;}
 
 {AND} {return T_AND;}
 {ASS} {return T_ASS;}

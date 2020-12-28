@@ -25,6 +25,7 @@
 %token COMA
 %token LBRAC RBRAC
 %token LPATH RPATH
+%token LSQ   RSQ
 %token SEMI
 // i/o
 %token CHAR_IN  INT_IN  STR_IN
@@ -1142,6 +1143,13 @@ UnaryOp
 }
 ;
 
+VarArray
+: VarInitVal VarInitRest {
+    $1->addSibling($2);
+    $$ = $1;
+}
+;
+
 VarDecl
 : TYPE VarDef VarRest SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
@@ -1184,6 +1192,12 @@ VarDef
 : ID {
     $$ = $1;
 }
+| ID LSQ LowExp RSQ {
+
+}
+| ID LSQ RSQ T_ASS VarInitVal {
+
+}
 | ID T_ASS VarInitVal {
     $1->type = $3->type;
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
@@ -1197,6 +1211,16 @@ VarDef
 }
 ;
 
+VarInitRest
+: COMA VarInitVal VarInitRest {
+    $2->addSibling($3);
+    $$ = $2;
+}
+| {
+    $$ = nullptr;
+}
+;
+
 VarInitVal
 : BOOL {
     $$ = $1;
@@ -1206,6 +1230,9 @@ VarInitVal
 }
 | Exp {
     $$ = $1;
+}
+| LBRAC VarArray RBRAC {
+
 }
 | STRING {
     $$ = $1;
