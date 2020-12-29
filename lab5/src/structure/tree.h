@@ -5,6 +5,7 @@ enum NodeType
 {
     NODE_CONST, // 常量
     NODE_EXPR,  // 表达式
+    NODE_FUNC,  // 函数
     NODE_KEY,   // 保留字
     NODE_OP,    // 符号
     NODE_PARM,  // 参数

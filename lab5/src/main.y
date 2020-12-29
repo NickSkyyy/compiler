@@ -1,6 +1,7 @@
 %{
     #include "common.h"
     TreeNode* root;
+    extern bool isRet;
     extern int lineNo;
     extern int Lloop;
     extern int tErr;
@@ -550,7 +551,10 @@ FuncDef
     $$ = node;
     inFunc.pop();
 }
-| TYPE ID LPATH FuncFParams RPATH { inFunc.push($1); } Block {
+| TYPE ID LPATH FuncFParams RPATH {
+    inFunc.push($1); 
+    isRet = false;
+} Block {
     TreeNode* node = new TreeNode($1->lineNo, NODE_PROG);
     node->addChild($1);
     node->addChild($2);
@@ -558,6 +562,13 @@ FuncDef
     node->addChild($7);
     $$ = node;
     inFunc.pop();
+    if (!isRet && *($1->type) != *(TYPE_VOID))
+    {
+        tErr++;
+        cout << "error @" << $1->lineNo << ": ";
+        cout << "no <" << $1->type->getTypeInfo();
+        cout << "> return for function\n";
+    }
 }
 ;
 
@@ -583,8 +594,31 @@ FuncFParams
 }
 ;
 
+FuncRParams
+: Exp FuncRRest {
+    TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
+    node->stmtType = STMT_PARM;
+    node->addChild($1);
+    node->addChild($2);
+    $$ = node;
+}
+| {
+    $$ = nullptr;
+}
+;
+
 FuncFRest
 : COMA FuncFParam FuncFRest {
+    $2->addSibling($3);
+    $$ = $2;
+}
+| {
+    $$ = nullptr;
+}
+;
+
+FuncRRest
+: COMA Exp FuncRRest {
     $2->addSibling($3);
     $$ = $2;
 }
@@ -1076,6 +1110,7 @@ Stmt
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
     node->stmtType = STMT_RET;
     $$ = node;
+    isRet = true;
 }
 | RETURN Exp SEMI {
     TreeNode* node = new TreeNode($1->lineNo, NODE_STMT);
@@ -1097,6 +1132,7 @@ Stmt
         cout << "<" << inFunc.top()->type->getTypeInfo();
         cout << ">\n";
     }
+    isRet = true;
 }
 | SEMI {
     $$ = nullptr;
@@ -1113,7 +1149,13 @@ Stmt
 ;
 
 UnaryExp
-: PrimaryExp {
+: ID LPATH FuncRParams RPATH {
+    TreeNode* node = new TreeNode($3->lineNo, NODE_FUNC);
+    node->addChild($1);
+    node->addChild($3);
+    $$ = node;
+}
+| PrimaryExp {
     $$ = $1;
 }
 | UnaryOp UnaryExp {
