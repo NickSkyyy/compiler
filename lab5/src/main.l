@@ -182,6 +182,7 @@ STR         \"[^\"]*\"
         node->type = TYPE_VOID;
     else
         node->type = new Type(NOT_SURE);
+    node->varName = yytext;
     yylval = node;
     return TYPE;
 }
@@ -213,6 +214,8 @@ STR         \"[^\"]*\"
     node->type = TYPE_CHAR;
     if (strcmp(yytext, "'\\n'") == 0)
         node->cval = '\n';
+    else if (strcmp(yytext, "'\\t'") == 0)
+        node->cval = '\t';    
     else
         node->cval = yytext[1];
     node->ival = (int)node->cval;

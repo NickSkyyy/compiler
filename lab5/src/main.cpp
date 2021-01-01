@@ -6,6 +6,7 @@ extern FILE* yyin;
 extern int yyparse();
 extern map<pair<TreeNode*, string>, TreeNode*> idt;
 extern map<int, TreeNode*> id2id;
+extern map<int, int> id2off;
 extern TreeNode* root;
 
 int tErr = 0;   // 错误类型数量
@@ -23,6 +24,12 @@ void printIdt()
         cout << "(@" << myself->nodeID;
         cout << ", @" << parent->nodeID << ") ";
         cout << (myself->isConst ? "const" : "var") << endl;
+    }
+    cout << "id2off\n";
+    for (auto &it : id2off)
+    {
+        cout << "@" << it.first;
+        cout << ", " << it.second << endl;
     }
 }
 
@@ -56,7 +63,7 @@ int main(int argc, char* argv[])
         printInfo(argv);
         root->genNodeId(0);   
         root->checkType();
-        if (tErr == 0)
+        if (1)
         {
             root->printAST();
             printIdt();

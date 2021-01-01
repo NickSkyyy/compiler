@@ -7,6 +7,7 @@
     extern int tErr;
     extern stack<TreeNode*> inFunc;
     bool isNTS(Type* t) { return t->type == NOT_SURE; }
+    int tempID;
     int yyerror(char const*);  
     int yylex();
 %}
@@ -53,7 +54,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -77,7 +78,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -98,7 +99,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;   
+        $1->type->type = $3->type->type;   
     node->addChild($1); 
     $$ = node;
 }
@@ -118,7 +119,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -139,7 +140,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     $$ = node;
 }
@@ -159,7 +160,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -180,7 +181,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     $$ = node;
 }
@@ -199,7 +200,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -220,7 +221,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -241,7 +242,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -262,7 +263,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -283,7 +284,7 @@ Assign
         cout << $1->varName << ">" << endl;
     }
     else
-        $1->type = $3->type;
+        $1->type->type = $3->type->type;
     node->addChild($1);
     node->addChild($3);
     node->bval = true;
@@ -576,6 +577,7 @@ FuncFParam
 : TYPE ID {
     TreeNode* node = new TreeNode($1->lineNo, NODE_PARM);
     node->addChild($1);
+    $2->type = $1->type;
     node->addChild($2);
     $$ = node;
 }
@@ -905,8 +907,18 @@ LowExp
 ;
 
 Lval
-: ID {
+: ID LvalRest{
+    $1->addChild($2);
     $$ = $1;
+}
+;
+
+LvalRest
+: LSQ Exp RSQ {
+    $$ = $2;
+}
+| {
+    $$ = nullptr;
 }
 ;
 
@@ -1149,10 +1161,11 @@ Stmt
 ;
 
 UnaryExp
-: ID LPATH FuncRParams RPATH {
-    TreeNode* node = new TreeNode($3->lineNo, NODE_FUNC);
+: ID LPATH { tempID = lineNo; } FuncRParams RPATH {
+    TreeNode* node = new TreeNode(tempID, NODE_FUNC);
+    node->type = TYPE_INT;
     node->addChild($1);
-    node->addChild($3);
+    node->addChild($4);
     $$ = node;
 }
 | PrimaryExp {
@@ -1207,7 +1220,7 @@ VarDecl
         cout << $2->child->varName << ">" << endl;
     }
     else
-        $2->type = $1->type;          
+        $2->type->type = $1->type->type;          
     node->addChild($2);
     TreeNode* p = $3;
     while (p != nullptr)
@@ -1222,7 +1235,7 @@ VarDecl
             cout << p->child->varName << ">" << endl;
         }
         else
-            p->type = $1->type;
+            p->type->type = $1->type->type;
         p = p->rsib;
     }
     node->addChild($3);
@@ -1235,10 +1248,15 @@ VarDef
     $$ = $1;
 }
 | ID LSQ LowExp RSQ {
-
+    $1->type->isArray = true;
+    $1->type->size = $3->ival;
+    $$ = $1;
 }
-| ID LSQ RSQ T_ASS VarInitVal {
-
+| ID LSQ LowExp RSQ T_ASS VarInitVal {
+    $1->type->isArray = true;
+    $1->type->size = $3->ival;
+    $1->addSibling($6);
+    $$ = $1;
 }
 | ID T_ASS VarInitVal {
     $1->type = $3->type;
@@ -1283,7 +1301,7 @@ VarInitVal
 
 VarRest
 : COMA VarDef VarRest {
-    $2->addChild($3);
+    $2->addSibling($3);
     $$ = $2;
 }
 | {
