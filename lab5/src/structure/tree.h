@@ -93,8 +93,8 @@ public:
     void addChild(TreeNode*);
     void addSibling(TreeNode*); 
     void cpFrom(TreeNode* node);
-    void genCode(ofstream &os);
-    void genStr(ofstream &os);
+    void genCode();
+    void genStr();
     void printAST();
     void printRe();
     void printChildrenId();

@@ -60,18 +60,18 @@ int main(int argc, char* argv[])
     yyparse();
     if (root != NULL) 
     {
-        printInfo(argv);
+        //printInfo(argv);
         root->genNodeId(0);   
         root->checkType();
-        if (1)
+        if (tErr == 0)
         {
-            root->printAST();
-            printIdt();
-            ofstream os("./out/test.s"); 
-            root->genStr(os);
-            root->genCode(os);
-            os << "\t.section\t.note.GNU-stack,\"\",@progbits";
-            os.close();
+            //root->printAST();
+            //printIdt();
+            //ofstream cout("./out/test.s"); 
+            root->genStr();
+            root->genCode();
+            cout << "\t.section\t.note.GNU-stack,\"\",@progbits";
+            //cout.close();
         }
         else
             cout << "error tot: " << tErr << endl;      

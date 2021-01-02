@@ -432,10 +432,10 @@ void TreeNode::cpFrom(TreeNode* node)
     type->type = node->type->type;
 }
 
-void TreeNode::genCode(ofstream &os)
+void TreeNode::genCode()
 {
     if (nodeType == NODE_CONST)
-        os << "\tpushl\t$" << ival << endl;
+        cout << "\tpushl\t$" << ival << endl;
     else if (nodeType == NODE_EXPR)
     {
         TreeNode* first = child;
@@ -443,27 +443,27 @@ void TreeNode::genCode(ofstream &os)
         switch (first->nodeType)
         {
         case NODE_CONST:  
-            os << "\tpushl\t$" << first->ival << endl;        
+            cout << "\tpushl\t$" << first->ival << endl;        
             break;
         case NODE_EXPR:
-            first->genCode(os);
+            first->genCode();
             break;
         case NODE_FUNC:
             if (first->rsib != nullptr) noSib.push(first->rsib);
-            first->genCode(os);
+            first->genCode();
             noSib.pop();
-            os << "\tpushl\t%eax\n";
+            cout << "\tpushl\t%eax\n";
             break;
         case NODE_VAR:
             if (id2off.find(first->nodeID) != id2off.end())
             { 
                 int t = id2off.find(first->nodeID)->second;
-                os << "\tmovl\t" << (-1) * t;
-                os << "(%ebp), %eax\n";
-                os << "\tpushl\t%eax\n";
+                cout << "\tmovl\t" << (-1) * t;
+                cout << "(%ebp), %eax\n";
+                cout << "\tpushl\t%eax\n";
             }
             else
-                os << "\tpushl\t" << first->varName << endl;  
+                cout << "\tpushl\t" << first->varName << endl;  
             break;
         default:
             break;
@@ -474,20 +474,20 @@ void TreeNode::genCode(ofstream &os)
             switch (opType)
             {
             case OP_MINS:
-                os << "\tpopl\t%eax\n";
-                os << "\tmovl\t$-1, %ecx\n";
-                os << "\timull\t%ecx\n";
-                os << "\tpushl\t%eax\n"; 
+                cout << "\tpopl\t%eax\n";
+                cout << "\tmovl\t$-1, %ecx\n";
+                cout << "\timull\t%ecx\n";
+                cout << "\tpushl\t%eax\n"; 
                 break;
             case OP_NOT:
-                os << "\tpopl\t%eax\n";
-                os << "\tcmp\t$0, %eax\n";
-                os << "\tjz\tTEMP_NEXT" << Ltemp << endl;
-                os << "\tpushl\t$0\n";
-                os << "\tjmp\tTEMP_END" << Ltemp << endl;
-                os << "TEMP_NEXT" << Ltemp << ":\n";
-                os << "\tpushl\t$1\n";
-                os << "TEMP_END" << Ltemp << ":\n";
+                cout << "\tpopl\t%eax\n";
+                cout << "\tcmp\t$0, %eax\n";
+                cout << "\tjz\tTEMP_NEXT" << Ltemp << endl;
+                cout << "\tpushl\t$0\n";
+                cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+                cout << "TEMP_NEXT" << Ltemp << ":\n";
+                cout << "\tpushl\t$1\n";
+                cout << "TEMP_END" << Ltemp << ":\n";
                 Ltemp++;
                 break;
             default:
@@ -499,25 +499,25 @@ void TreeNode::genCode(ofstream &os)
         switch (second->nodeType)
         {
         case NODE_CONST:  
-            os << "\tpushl\t$" << second->ival << endl;        
+            cout << "\tpushl\t$" << second->ival << endl;        
             break;
         case NODE_EXPR:
-            second->genCode(os);
+            second->genCode();
             break;
         case NODE_FUNC:
-            second->genCode(os);
-            os << "\tpushl\t%eax\n";
+            second->genCode();
+            cout << "\tpushl\t%eax\n";
             break;
         case NODE_VAR:
             if (id2off.find(second->nodeID) != id2off.end())
             { 
                 int t = id2off.find(second->nodeID)->second;
-                os << "\tmovl\t" << (-1) * t;
-                os << "(%ebp), %eax\n";
-                os << "\tpushl\t%eax\n";
+                cout << "\tmovl\t" << (-1) * t;
+                cout << "(%ebp), %eax\n";
+                cout << "\tpushl\t%eax\n";
             }
             else
-                os << "\tpushl\t" << second->varName << endl;  
+                cout << "\tpushl\t" << second->varName << endl;  
             break;
         default:
             break;
@@ -525,137 +525,137 @@ void TreeNode::genCode(ofstream &os)
         switch (opType)
         {
         case OP_AND:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t$0, %eax\n";
-            os << "\tjz\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tcmp\t$0, %ecx\n";
-            os << "\tjz\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$1\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$0\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t$0, %eax\n";
+            cout << "\tjz\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tcmp\t$0, %ecx\n";
+            cout << "\tjz\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$1\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$0\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_DIV:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcltd\n";
-            os << "\tidivl\t%ecx\n";               
-            os << "\tpushl\t%eax\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcltd\n";
+            cout << "\tidivl\t%ecx\n";               
+            cout << "\tpushl\t%eax\n";
             break;
         case OP_EQ:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t%eax, %ecx\n";
-            os << "\tjz\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$0\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$1\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t%eax, %ecx\n";
+            cout << "\tjz\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$0\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$1\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_LA:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t%ecx, %eax\n";
-            os << "\tjg\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$0\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$1\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t%ecx, %eax\n";
+            cout << "\tjg\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$0\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$1\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_LAE:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t%ecx, %eax\n";
-            os << "\tjnl\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$0\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$1\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t%ecx, %eax\n";
+            cout << "\tjnl\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$0\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$1\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_LE:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t%ecx, %eax\n";
-            os << "\tjl\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$0\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$1\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t%ecx, %eax\n";
+            cout << "\tjl\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$0\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$1\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_LEE:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t%ecx, %eax\n";
-            os << "\tjle\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$0\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$1\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t%ecx, %eax\n";
+            cout << "\tjle\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$0\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$1\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_MINS:         
-            os << "\tpopl\t%edx\n";
-            os << "\tpopl\t%eax\n";     
-            os << "\tsubl\t%edx, %eax\n";
-            os << "\tpushl\t%eax\n";
+            cout << "\tpopl\t%edx\n";
+            cout << "\tpopl\t%eax\n";     
+            cout << "\tsubl\t%edx, %eax\n";
+            cout << "\tpushl\t%eax\n";
             break;
         case OP_MOD:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcltd\n";
-            os << "\tidivl\t%ecx\n";               
-            os << "\tpushl\t%edx\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcltd\n";
+            cout << "\tidivl\t%ecx\n";               
+            cout << "\tpushl\t%edx\n";
             break;
         case OP_MUL:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcltd\n";
-            os << "\timull\t%ecx\n";               
-            os << "\tpushl\t%eax\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcltd\n";
+            cout << "\timull\t%ecx\n";               
+            cout << "\tpushl\t%eax\n";
             break;
         case OP_NOTE:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t%eax, %ecx\n";
-            os << "\tjz\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$1\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$0\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t%eax, %ecx\n";
+            cout << "\tjz\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$1\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$0\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_OR:
-            os << "\tpopl\t%ecx\n";
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t$0, %eax\n";
-            os << "\tjnz\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tcmp\t$0, %ecx\n";
-            os << "\tjnz\tTEMP_NEXT" << Ltemp << endl;
-            os << "\tpushl\t$0\n";
-            os << "\tjmp\tTEMP_END" << Ltemp << endl;
-            os << "TEMP_NEXT" << Ltemp << ":\n";
-            os << "\tpushl\t$1\n";
-            os << "TEMP_END" << Ltemp << ":\n";
+            cout << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t$0, %eax\n";
+            cout << "\tjnz\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tcmp\t$0, %ecx\n";
+            cout << "\tjnz\tTEMP_NEXT" << Ltemp << endl;
+            cout << "\tpushl\t$0\n";
+            cout << "\tjmp\tTEMP_END" << Ltemp << endl;
+            cout << "TEMP_NEXT" << Ltemp << ":\n";
+            cout << "\tpushl\t$1\n";
+            cout << "TEMP_END" << Ltemp << ":\n";
             Ltemp++;
             break;
         case OP_PLUS:
-            os << "\tpopl\t%edx\n";
-            os << "\tpopl\t%eax\n";     
-            os << "\taddl\t%edx, %eax\n";
-            os << "\tpushl\t%eax\n";
+            cout << "\tpopl\t%edx\n";
+            cout << "\tpopl\t%eax\n";     
+            cout << "\taddl\t%edx, %eax\n";
+            cout << "\tpushl\t%eax\n";
             break;
         default:
             break;
@@ -675,24 +675,24 @@ void TreeNode::genCode(ofstream &os)
                 switch (params->nodeType)
                 {
                 case NODE_CONST:
-                    os << "\tpushl\t$" << params->ival << endl;
+                    cout << "\tpushl\t$" << params->ival << endl;
                     break;
                 case NODE_EXPR:
-                    params->genCode(os);
+                    params->genCode();
                     break;
                 case NODE_FUNC:
-                    params->genCode(os);
-                    os << "\tpushl\t%eax\n";
+                    params->genCode();
+                    cout << "\tpushl\t%eax\n";
                     break;
                 case NODE_VAR:
                     if (id2off.find(params->nodeID) != id2off.end())
                     {
                         int t = id2off.find(params->nodeID)->second;
-                        os << "\tpushl\t" << (-1) * t;
-                        os << "(%ebp)\n";
+                        cout << "\tpushl\t" << (-1) * t;
+                        cout << "(%ebp)\n";
                     }
                     else
-                        os << "\tpushl\t" << params->varName << endl;
+                        cout << "\tpushl\t" << params->varName << endl;
                     break;
                 default:
                     break;
@@ -701,49 +701,49 @@ void TreeNode::genCode(ofstream &os)
                 toff += 4;
             }
         }
-        os << "\tcall\t" << child->varName << endl;
+        cout << "\tcall\t" << child->varName << endl;
         if (toff != 0)
-            os << "\taddl\t$" << toff << ", %esp\n";
+            cout << "\taddl\t$" << toff << ", %esp\n";
     }
     else if (nodeType == NODE_KEY)
     {
         if (varName == "break")
-            os << "\tjmp\tLOOP" << LL1.top() << "_END\n";
+            cout << "\tjmp\tLOOP" << LL1.top() << "_END\n";
         else if (varName == "continue")
-            os << "\tjmp\tLOOP" << LL1.top() << "_COND\n";
+            cout << "\tjmp\tLOOP" << LL1.top() << "_COND\n";
     }
     else if (nodeType == NODE_PROG &&
              nodeID != 0)
     {
         inFunc.push(this);
         isRet = false;
-        os << "\t.text\n";
-        os << "\t.globl\t" << child->rsib->varName << endl;
-        os << "\t.type\t" << child->rsib->varName;
-        os << ", @function\n";
-        os << child->rsib->varName << ":\n";
+        cout << "\t.text\n";
+        cout << "\t.globl\t" << child->rsib->varName << endl;
+        cout << "\t.type\t" << child->rsib->varName;
+        cout << ", @function\n";
+        cout << child->rsib->varName << ":\n";
         if (child->rsib->varName == "main") isMain = true; 
         else isFunc = true, tempoff = 0;
-        os << "\tpushl\t%ebp\n";
-        os << "\tmovl\t%esp, %ebp\n";
+        cout << "\tpushl\t%ebp\n";
+        cout << "\tmovl\t%esp, %ebp\n";
         param -= 4;    // ebp offset
         TreeNode* params = child->rsib->rsib;
         if (params != nullptr)
         { 
-            params->genCode(os);
+            params->genCode();
             if (params->stmtType == STMT_PARM &&
                 params->rsib != nullptr)            
-                params->rsib->genCode(os); 
+                params->rsib->genCode(); 
             
         }           
         inFunc.pop();
         if (!isRet) // 手动退出
         {
-            if (child->rsib->varName == "main") os << ".END:\n";
-                os << "\tmovl\t%ebp, %esp\n";
-                os << "\tpopl\t%ebp\n";
-                os << "\tmovl\t$0, %eax\n";             
-                os << "\tret\n";
+            if (child->rsib->varName == "main") cout << ".END:\n";
+                cout << "\tmovl\t%ebp, %esp\n";
+                cout << "\tpopl\t%ebp\n";
+                cout << "\tmovl\t$0, %eax\n";             
+                cout << "\tret\n";
         }
         param = 0;
         isFunc = false;
@@ -757,29 +757,29 @@ void TreeNode::genCode(ofstream &os)
         {
         case NODE_CONST:
             if (*(val->type) == *(TYPE_STRING))
-                os << "\tpushl\t_STR_" << val->nodeID << endl;
+                cout << "\tpushl\t_STR_" << val->nodeID << endl;
             else if (val->type->type == VALUE_CHAR)
-                os << "\tmovb\t$" << val->ival;
+                cout << "\tmovb\t$" << val->ival;
             else
-                os << "\tpushl\t$" << val->ival << endl;
+                cout << "\tpushl\t$" << val->ival << endl;
             break;
         case NODE_EXPR:
-            val->genCode(os);
+            val->genCode();
             break;
         case NODE_FUNC:
-            val->genCode(os);
-            os << "\tpushl\t%eax\n";
+            val->genCode();
+            cout << "\tpushl\t%eax\n";
             break;
         case NODE_VAR:
             if (id2off.find(val->nodeID) != id2off.end())
             { 
                 int t = id2off.find(val->nodeID)->second;
-                os << "\tmovl\t" << (-1) * t;
-                os << "(%ebp), %eax\n";
-                os << "\tpushl\t%eax\n";
+                cout << "\tmovl\t" << (-1) * t;
+                cout << "(%ebp), %eax\n";
+                cout << "\tpushl\t%eax\n";
             }
             else
-                os << "\tpushl\t" << val->varName << endl;
+                cout << "\tpushl\t" << val->varName << endl;
             break;
         default:
             break;
@@ -791,101 +791,101 @@ void TreeNode::genCode(ofstream &os)
             { 
                 int t = id2off.find(child->nodeID)->second;
                 if (type->type == VALUE_CHAR)
-                    os << ", ";
+                    cout << ", ";
                 else
                 {
-                    os << "\tpopl\t%eax\n";
-                    os << "\tmovl\t%eax, ";
+                    cout << "\tpopl\t%eax\n";
+                    cout << "\tmovl\t%eax, ";
                 }    
-                os << (-1) * t;
-                os << "(%ebp)\n";         
+                cout << (-1) * t;
+                cout << "(%ebp)\n";         
             }
             else
             {
                 if (child->type->isArray)
                 {
-                    child->child->genCode(os);
-                    os << "\tlea\t";
-                    os << child->varName;
-                    os << ", %ebx\n";
-                    os << "\tpopl\t%eax\n";
-                    os << "\tmovl\t$4, %ecx\n";
-                    os << "\timull\t%ecx\n";
-                    os << "\tsubl\t%eax, %ebx\n";
-                    os << "\tpopl\t0(%ebx)\n";
+                    child->child->genCode();
+                    cout << "\tlea\t";
+                    cout << child->varName;
+                    cout << ", %ebx\n";
+                    cout << "\tpopl\t%eax\n";
+                    cout << "\tmovl\t$4, %ecx\n";
+                    cout << "\timull\t%ecx\n";
+                    cout << "\tsubl\t%eax, %ebx\n";
+                    cout << "\tpopl\t0(%ebx)\n";
                 }
                 else if (child->type->type == VALUE_CHAR)
-                    os << ", " << child->varName << endl;
+                    cout << ", " << child->varName << endl;
                 else
-                    os << "\tpopl\t" << child->varName << endl;          
+                    cout << "\tpopl\t" << child->varName << endl;          
             }
             break;
         case OP_DIVE:
-            os << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%ecx\n";
             if (id2off.find(child->nodeID) != id2off.end())
             { 
                 int t = id2off.find(child->nodeID)->second;
-                os << "\tmovl\t" << (-1) * t;
-                os << "(%ebp)";
+                cout << "\tmovl\t" << (-1) * t;
+                cout << "(%ebp)";
             }
             else
-                os << "\tmovl\t" << child->varName;
-            os << ", %eax\n";
-            os << "\tmovl\t$0, %edx\n";
-            os << "\tidivl\t%ecx\n";
-            os << "\tmovl\t%eax, " << child->varName << endl;
+                cout << "\tmovl\t" << child->varName;
+            cout << ", %eax\n";
+            cout << "\tmovl\t$0, %edx\n";
+            cout << "\tidivl\t%ecx\n";
+            cout << "\tmovl\t%eax, " << child->varName << endl;
             break;
         case OP_MINE:
-            os << "\tpopl\t%eax\n";
+            cout << "\tpopl\t%eax\n";
             if (id2off.find(child->nodeID) != id2off.end())
             { 
                 int t = id2off.find(child->nodeID)->second;
-                os << "\tsubl\t%eax, " << (-1) * t;
-                os << "(%ebp)\n";
+                cout << "\tsubl\t%eax, " << (-1) * t;
+                cout << "(%ebp)\n";
             }
             else
-                os << "\tsubl\t%eax, " << child->varName << endl;
+                cout << "\tsubl\t%eax, " << child->varName << endl;
             break;
         case OP_MODE:
-            os << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%ecx\n";
             if (id2off.find(child->nodeID) != id2off.end())
             { 
                 int t = id2off.find(child->nodeID)->second;
-                os << "\tmovl\t" << (-1) * t;
-                os << "(%ebp)";               
+                cout << "\tmovl\t" << (-1) * t;
+                cout << "(%ebp)";               
             }
             else
-                os << "\tmovl\t" << child->varName;
-            os << ", %eax\n";
-            os << "\tmovl\t$0, %edx\n";
-            os << "\tidivl\t%ecx\n";
-            os << "\tmovl\t%edx, " << child->varName << endl;
+                cout << "\tmovl\t" << child->varName;
+            cout << ", %eax\n";
+            cout << "\tmovl\t$0, %edx\n";
+            cout << "\tidivl\t%ecx\n";
+            cout << "\tmovl\t%edx, " << child->varName << endl;
             break;
         case OP_MULE:
-            os << "\tpopl\t%ecx\n";
+            cout << "\tpopl\t%ecx\n";
             if (id2off.find(child->nodeID) != id2off.end())
             { 
                 int t = id2off.find(child->nodeID)->second;
-                os << "\tmovl\t" << (-1) * t;
-                os << "(%ebp)";               
+                cout << "\tmovl\t" << (-1) * t;
+                cout << "(%ebp)";               
             }
             else
-                os << "\tmovl\t" << child->varName;
-            os << ", %eax\n";
-            os << "\tmovl\t$0, %edx\n";
-            os << "\timull\t%ecx\n";
-            os << "\tmovl\t%eax, " << child->varName << endl;
+                cout << "\tmovl\t" << child->varName;
+            cout << ", %eax\n";
+            cout << "\tmovl\t$0, %edx\n";
+            cout << "\timull\t%ecx\n";
+            cout << "\tmovl\t%eax, " << child->varName << endl;
             break;
         case OP_PLUE:
-            os << "\tpopl\t%eax\n";
+            cout << "\tpopl\t%eax\n";
             if (id2off.find(child->nodeID) != id2off.end())
             { 
                 int t = id2off.find(child->nodeID)->second;
-                os << "\taddl\t%eax, " << (-1) * t;
-                os << "(%ebp)\n";  
+                cout << "\taddl\t%eax, " << (-1) * t;
+                cout << "(%ebp)\n";  
             }
             else
-                os << "\taddl\t%eax, " << child->varName << endl;
+                cout << "\taddl\t%eax, " << child->varName << endl;
             break;
         default:
             break;
@@ -899,8 +899,8 @@ void TreeNode::genCode(ofstream &os)
         {
             // else
             TreeNode* stmt = child->rsib;
-            stmt->genCode(os);
-            os << "COND" << LC1.top() << "_END:\n";
+            stmt->genCode();
+            cout << "COND" << LC1.top() << "_END:\n";
             LC1.pop();
             Lson = LC2.top(), LC2.pop();
             return;
@@ -924,29 +924,29 @@ void TreeNode::genCode(ofstream &os)
             rest = stmt->rsib;
         }
         noSib.push(stmt);
-        cond->genCode(os);
+        cond->genCode();
         noSib.pop();
-        os << "\tpopl\t%eax\n";
-        os << "\tcmp\t$0, %eax\n";
+        cout << "\tpopl\t%eax\n";
+        cout << "\tcmp\t$0, %eax\n";
         if (rest != nullptr)
         {
             // (else) if (cond) stmt rest
-            os << "\tjz\tCOND" << LC1.top() << "_";
-            os << Lson << endl;
+            cout << "\tjz\tCOND" << LC1.top() << "_";
+            cout << Lson << endl;
             noSib.push(rest);
-            stmt->genCode(os);
+            stmt->genCode();
             noSib.pop();   
-            os << "\tjmp\tCOND" << LC1.top() << "_END\n";
-            os << "COND" << LC1.top() << "_";
-            os << Lson << ":\n";
-            rest->genCode(os);
+            cout << "\tjmp\tCOND" << LC1.top() << "_END\n";
+            cout << "COND" << LC1.top() << "_";
+            cout << Lson << ":\n";
+            rest->genCode();
         }
         else
         {
             // (else) if (cond) stmt
-            os << "\tjz\tCOND" << LC1.top() << "_END\n";
-            stmt->genCode(os);
-            os << "COND" << LC1.top() << "_END:\n";
+            cout << "\tjz\tCOND" << LC1.top() << "_END\n";
+            stmt->genCode();
+            cout << "COND" << LC1.top() << "_END:\n";
             LC1.pop();
             Lson = LC2.top(), LC2.pop();
         } 
@@ -967,17 +967,17 @@ void TreeNode::genCode(ofstream &os)
                     case VALUE_CHAR:
                         offset++;
                         if (isFunc) tempoff++;
-                        os << "\tsubl\t$1, %esp\n";
+                        cout << "\tsubl\t$1, %esp\n";
                         break;
                     case VALUE_INT:
                         offset += 4;
                         if (isFunc) tempoff += 4;
-                        os << "\tsubl\t$4, %esp\n";
+                        cout << "\tsubl\t$4, %esp\n";
                         break;
                     case VALUE_STRING:
                         offset += 8;
                         if (isFunc) tempoff += 8;
-                        os << "\tsubl\t$8, %esp\n";
+                        cout << "\tsubl\t$8, %esp\n";
                         break;
                     default:
                         break;
@@ -989,31 +989,31 @@ void TreeNode::genCode(ofstream &os)
                          p->stmtType == STMT_ASS)
                 {
                     TreeNode* tid = p->child;
-                    tid->rsib->genCode(os);
+                    tid->rsib->genCode();
                     if (tid->rsib->nodeType != NODE_FUNC)
-                        os << "\tpopl\t%eax\n";
+                        cout << "\tpopl\t%eax\n";
                     switch (tid->type->type)
                     {
                     case VALUE_CHAR:
                         offset++;
                         if (isFunc) tempoff++;
-                        os << "\tsubl\t$1, %esp\n";
+                        cout << "\tsubl\t$1, %esp\n";
                         break;
                     case VALUE_INT:
                         offset += 4;
                         if (isFunc) tempoff += 4;
-                        os << "\tsubl\t$4, %esp\n";
+                        cout << "\tsubl\t$4, %esp\n";
                         break;
                     case VALUE_STRING:
                         offset += 8;
                         if (isFunc) tempoff += 8;
-                        os << "\tsubl\t$8, %esp\n";
+                        cout << "\tsubl\t$8, %esp\n";
                         break;
                     default:
                         break;
                     }
-                    os << "\tmovl\t%eax, ";
-                    os << (-1) * offset << "(%ebp)\n";
+                    cout << "\tmovl\t%eax, ";
+                    cout << (-1) * offset << "(%ebp)\n";
                     id2off.insert(make_pair(tid->nodeID, offset));
                     ids.push(tid->nodeID);
                 }
@@ -1027,23 +1027,23 @@ void TreeNode::genCode(ofstream &os)
             {
                 if (p->nodeType == NODE_VAR)
                 {
-                    os << "\t.bss\n";
-                    os << "\t.comm\t" << p->varName;
+                    cout << "\t.bss\n";
+                    cout << "\t.comm\t" << p->varName;
                     switch (p->type->type)
                     {
                     case VALUE_CHAR:
-                        os << ",1,1\n";    
+                        cout << ",1,1\n";    
                         break;
                     case VALUE_INT:
                         if (p->type->isArray)
                         {
-                            os << "," << 4 * p->type->size;
-                            os << ",32\n";
+                            cout << "," << 4 * p->type->size;
+                            cout << ",32\n";
                         }
-                        else os << ",4,4\n";
+                        else cout << ",4,4\n";
                         break;
                     case VALUE_STRING:
-                        os << ",8,8\n";
+                        cout << ",8,8\n";
                         break;
                     default:
                         break;
@@ -1053,50 +1053,50 @@ void TreeNode::genCode(ofstream &os)
                          p->stmtType == STMT_ASS)
                 {
                     TreeNode* tid = p->child;
-                    os << "\t.globl\t" << tid->varName << endl;
+                    cout << "\t.globl\t" << tid->varName << endl;
                     if (child->varName == "const")
-                        os << "\t.section\t.rodata\n"; 
+                        cout << "\t.section\t.rodata\n"; 
                     else
-                        os << "\t.data\n";   
+                        cout << "\t.data\n";   
                     if (tid->type->isArray)
-                        os << "\t/align\t32\n";
+                        cout << "\t/align\t32\n";
                     else if (*(tid->type) == *(TYPE_INT))
-                        os << "\t.align\t4\n";
+                        cout << "\t.align\t4\n";
                     else if (*(tid->type) == *(TYPE_STRING))
-                        os << "\t.align\t8\n";                 
-                    os << "\t.type\t" << tid->varName;
-                    os << ", @object\n";
-                    os << "\t.size\t" << tid->varName;
+                        cout << "\t.align\t8\n";                 
+                    cout << "\t.type\t" << tid->varName;
+                    cout << ", @object\n";
+                    cout << "\t.size\t" << tid->varName;
                     switch (tid->type->type)
                     {
                     case VALUE_CHAR:
-                        os << ", 1\n";
+                        cout << ", 1\n";
                         break;
                     case VALUE_INT:
                         if (tid->type->isArray) 
-                            os << ", " << 4 * tid->type->size << "\n";
-                        else os << ", 4\n";
+                            cout << ", " << 4 * tid->type->size << "\n";
+                        else cout << ", 4\n";
                         break;
                     case VALUE_STRING:
-                        os << ", 8\n";
+                        cout << ", 8\n";
                         break;
                     default:
                         break;
                     }
-                    os << tid->varName << ":\n";
+                    cout << tid->varName << ":\n";
                     tid = tid->rsib;
                     if (tid->nodeType == NODE_CONST)
                     {
                         switch (tid->type->type)
                         {
                         case VALUE_CHAR:
-                            os << "\t.byte\t" << (int)tid->cval << endl;
+                            cout << "\t.byte\t" << (int)tid->cval << endl;
                             break;
                         case VALUE_INT:
-                            os << "\t.long\t" << tid->ival << endl;
+                            cout << "\t.long\t" << tid->ival << endl;
                             break;
                         case VALUE_STRING:
-                            os << "\t.string\t\"" << tid->sval << "\"\n";
+                            cout << "\t.string\t\"" << tid->sval << "\"\n";
                             break;
                         default:
                             break;
@@ -1116,12 +1116,12 @@ void TreeNode::genCode(ofstream &os)
     {
         if (child->nodeType == NODE_FUNC)
         {
-            child->genCode(os);
-            os << "\t# printf\n";
-            os << "\tpushl\t%eax\n";
-            os << "\tpushl\t$_INT\n";
-            os << "\tcall\tprintf\n";
-            os << "\taddl\t$8, %esp\n";
+            child->genCode();
+            cout << "\t# printf\n";
+            cout << "\tpushl\t%eax\n";
+            cout << "\tpushl\t$_INT\n";
+            cout << "\tcall\tprintf\n";
+            cout << "\taddl\t$8, %esp\n";
         }
         else
         {
@@ -1132,47 +1132,47 @@ void TreeNode::genCode(ofstream &os)
                 {
                     if (varName == "input")
                     {
-                        os << "\t# scanf\n";
+                        cout << "\t# scanf\n";
                         if (id2off.find(child->nodeID) != id2off.end())
                         {
                             int t = id2off.find(child->nodeID)->second;
-                            os << "\tmovb\t" << (-1) * t;                      
-                            os << "(%ebp), %al\n";
-                            os << "\tpushl\t%eax\n";
+                            cout << "\tmovb\t" << (-1) * t;                      
+                            cout << "(%ebp), %al\n";
+                            cout << "\tpushl\t%eax\n";
                         }
                         else
-                            os << "\tpushl\t$" << child->varName << endl;
-                        os << "\tpushl\t$_CHAR\n";
-                        os << "\tcall\tscanf\n";
-                        os << "\taddl\t$5, %esp\n";
+                            cout << "\tpushl\t$" << child->varName << endl;
+                        cout << "\tpushl\t$_CHAR\n";
+                        cout << "\tcall\tscanf\n";
+                        cout << "\taddl\t$5, %esp\n";
                     }   
                     else
                     {
-                        os << "\t# printf\n";
+                        cout << "\t# printf\n";
                         if (id2off.find(child->nodeID) != id2off.end())
                         {
                             int t = id2off.find(child->nodeID)->second;
-                            os << "\tmovb\t" << (-1) * t;
-                            os << "(%ebp)";
+                            cout << "\tmovb\t" << (-1) * t;
+                            cout << "(%ebp)";
                         }
                         else
-                            os << "\tmovb\t" << child->varName;
-                        os << ", %al\n";
-                        os << "\tpushl\t%eax\n";
-                        os << "\tpushl\t$_CHAR\n";
-                        os << "\tcall\tprintf\n";
-                        os << "\taddl\t$5, %esp\n";
+                            cout << "\tmovb\t" << child->varName;
+                        cout << ", %al\n";
+                        cout << "\tpushl\t%eax\n";
+                        cout << "\tpushl\t$_CHAR\n";
+                        cout << "\tcall\tprintf\n";
+                        cout << "\taddl\t$5, %esp\n";
                     }   
                 }
                 else if (child->nodeType == NODE_CONST)
                 {
-                    os << "\t# printf\n";
-                    os << "\tmovl\t$" << (int)child->cval;
-                    os << ", %eax\n";
-                    os << "\tpushl\t%eax\n";
-                    os << "\tpushl\t$_CHAR\n";
-                    os << "\tcall\tprintf\n";
-                    os << "\taddl\t$8, %esp\n";
+                    cout << "\t# printf\n";
+                    cout << "\tmovl\t$" << (int)child->cval;
+                    cout << ", %eax\n";
+                    cout << "\tpushl\t%eax\n";
+                    cout << "\tpushl\t$_CHAR\n";
+                    cout << "\tcall\tprintf\n";
+                    cout << "\taddl\t$8, %esp\n";
                 }
                 break;
             case VALUE_INT:
@@ -1180,123 +1180,123 @@ void TreeNode::genCode(ofstream &os)
                 {
                     if (varName == "input")
                     {
-                        os << "\t# scanf\n";
+                        cout << "\t# scanf\n";
                         if (id2off.find(child->nodeID) != id2off.end())
                         {
                             int t = id2off.find(child->nodeID)->second;
-                            os << "\tlea\t";
-                            os << (-1) * t << "(%ebp), %ebx\n";
-                            os << "\tpushl\t%ebx\n";
-                            os << "\tpushl\t$_INT\n";
-                            os << "\tcall\tscanf\n";
-                            os << "\taddl\t$8, %esp\n";                            
+                            cout << "\tlea\t";
+                            cout << (-1) * t << "(%ebp), %ebx\n";
+                            cout << "\tpushl\t%ebx\n";
+                            cout << "\tpushl\t$_INT\n";
+                            cout << "\tcall\tscanf\n";
+                            cout << "\taddl\t$8, %esp\n";                            
                         }
                         else
                         {
-                            os << "\tpushl\t$" << child->varName << endl;
-                            os << "\tpushl\t$_INT\n";
-                            os << "\tcall\tscanf\n";
-                            os << "\taddl\t$8, %esp\n";
+                            cout << "\tpushl\t$" << child->varName << endl;
+                            cout << "\tpushl\t$_INT\n";
+                            cout << "\tcall\tscanf\n";
+                            cout << "\taddl\t$8, %esp\n";
                         }
                     }   
                     else
                     {
-                        os << "\t# printf\n";
+                        cout << "\t# printf\n";
                         if (child->type->isArray && 
                             child->child != nullptr)
                         {
-                            os << "\tlea\t";
-                            os << child->varName;
-                            os << ", %ebx\n";
-                            child->child->genCode(os);
-                            os << "\tpopl\t%eax\n";
-                            os << "\tmovl\t$4, %ecx\n";
-                            os << "\timull\t%ecx\n";
-                            os << "\tsubl\t%eax, %ebx\n";
-                            os << "\tpushl\t0(%ebx)\n";
-                            os << "\tpushl\t$_INT\n";
-                            os << "\tcall\tprintf\n";
-                            os << "\taddl\t$8, %esp\n";
+                            cout << "\tlea\t";
+                            cout << child->varName;
+                            cout << ", %ebx\n";
+                            child->child->genCode();
+                            cout << "\tpopl\t%eax\n";
+                            cout << "\tmovl\t$4, %ecx\n";
+                            cout << "\timull\t%ecx\n";
+                            cout << "\tsubl\t%eax, %ebx\n";
+                            cout << "\tpushl\t0(%ebx)\n";
+                            cout << "\tpushl\t$_INT\n";
+                            cout << "\tcall\tprintf\n";
+                            cout << "\taddl\t$8, %esp\n";
                         }
                         else
                         {
                             if (id2off.find(child->nodeID) != id2off.end())
                             {
                                 int t = id2off.find(child->nodeID)->second;
-                                os << "\tmovl\t" << (-1) * t;
-                                os << "(%ebp)";                 
+                                cout << "\tmovl\t" << (-1) * t;
+                                cout << "(%ebp)";                 
                             }
                             else
-                                os << "\tmovl\t" << child->varName;
-                            os << ", %eax\n";
-                            os << "\tpushl\t%eax\n";
-                            os << "\tpushl\t$_INT\n";
-                            os << "\tcall\tprintf\n";
-                            os << "\taddl\t$8, %esp\n";
+                                cout << "\tmovl\t" << child->varName;
+                            cout << ", %eax\n";
+                            cout << "\tpushl\t%eax\n";
+                            cout << "\tpushl\t$_INT\n";
+                            cout << "\tcall\tprintf\n";
+                            cout << "\taddl\t$8, %esp\n";
                         }
                     }  
                 }
                 else if (child->nodeType == NODE_CONST)
                 {
-                    os << "\t# printf\n";
-                    os << "\tmovl\t$" << child->ival;
-                    os << ", %eax\n";
-                    os << "\tpushl\t%eax\n";
-                    os << "\tpushl\t$_INT\n";
-                    os << "\tcall\tprintf\n";
-                    os << "\taddl\t$8, %esp\n";
+                    cout << "\t# printf\n";
+                    cout << "\tmovl\t$" << child->ival;
+                    cout << ", %eax\n";
+                    cout << "\tpushl\t%eax\n";
+                    cout << "\tpushl\t$_INT\n";
+                    cout << "\tcall\tprintf\n";
+                    cout << "\taddl\t$8, %esp\n";
                 }
                 else if (child->nodeType == NODE_EXPR)
                 {
-                    child->genCode(os);
-                    os << "\t# printf\n";
-                    os << "\tpushl\t$_INT\n";
-                    os << "\tcall\tprintf\n";
-                    os << "\taddl\t$8, %esp\n";
+                    child->genCode();
+                    cout << "\t# printf\n";
+                    cout << "\tpushl\t$_INT\n";
+                    cout << "\tcall\tprintf\n";
+                    cout << "\taddl\t$8, %esp\n";
                 }
                 break; 
             case VALUE_STRING:
                 if (child->nodeType == NODE_CONST)
                 {
-                    os << "\t# printf\n";
-                    os << "\tpushl\t$_STR_" << child->nodeID << endl;
-                    os << "\tpushl\t$_STRING\n";
-                    os << "\tcall\tprintf\n";
-                    os << "\taddl\t$8, %esp\n";
+                    cout << "\t# printf\n";
+                    cout << "\tpushl\t$_STR_" << child->nodeID << endl;
+                    cout << "\tpushl\t$_STRING\n";
+                    cout << "\tcall\tprintf\n";
+                    cout << "\taddl\t$8, %esp\n";
                 }   
                 else if (child->nodeType == NODE_VAR)
                 {
                     if (varName == "input")
                     {
-                        os << "\t# scanf\n";
+                        cout << "\t# scanf\n";
                         if (id2off.find(child->nodeID) != id2off.end())
                         {
                             int t = id2off.find(child->nodeID)->second;
-                            os << "\tmovl\t" << (-1) * t;
-                            os << "(%ebp), %eax\n";
-                            os << "\tpushl\t%eax\n";
+                            cout << "\tmovl\t" << (-1) * t;
+                            cout << "(%ebp), %eax\n";
+                            cout << "\tpushl\t%eax\n";
                         }
                         else
-                            os << "\tpushl\t$" << child->varName << endl;
-                        os << "\tpushl\t$_STRING\n";
-                        os << "\tcall\tscanf\n";
-                        os << "\taddl\t$8, %esp\n";
+                            cout << "\tpushl\t$" << child->varName << endl;
+                        cout << "\tpushl\t$_STRING\n";
+                        cout << "\tcall\tscanf\n";
+                        cout << "\taddl\t$8, %esp\n";
                     }
                     else
                     {
-                        os << "\t# printf\n";
+                        cout << "\t# printf\n";
                         if (id2off.find(child->nodeID) != id2off.end())
                         {
                             int t = id2off.find(child->nodeID)->second;
-                            os << "\tmovl\t" << (-1) * t; 
-                            os << "(%ebp), %eax\n";
-                            os << "\tpushl\t%eax\n";
+                            cout << "\tmovl\t" << (-1) * t; 
+                            cout << "(%ebp), %eax\n";
+                            cout << "\tpushl\t%eax\n";
                         }
                         else
-                            os << "\tpushl\t$" << child->varName << endl;
-                        os << "\tpushl\t$_STRING\n";
-                        os << "\tcall\tprintf\n";
-                        os << "\taddl\t$8, %esp\n";
+                            cout << "\tpushl\t$" << child->varName << endl;
+                        cout << "\tpushl\t$_STRING\n";
+                        cout << "\tcall\tprintf\n";
+                        cout << "\taddl\t$8, %esp\n";
                     }
                 }       
             default:
@@ -1310,16 +1310,16 @@ void TreeNode::genCode(ofstream &os)
         LL1.push(Lloop), Lloop++;
         if (child->varName == "while")
         {
-            os << "LOOP" << LL1.top() << "_BGN:\n";   
+            cout << "LOOP" << LL1.top() << "_BGN:\n";   
             TreeNode* cond = child->rsib;
             TreeNode* stmt = cond->rsib;
             noSib.push(stmt);
-            cond->genCode(os);
+            cond->genCode();
             noSib.pop();
-            os << "\tpopl\t%eax\n";
-            os << "\tcmp\t$0, %eax\n";
-            os << "\tjz\tLOOP" << LL1.top() << "_END\n";
-            stmt->genCode(os);
+            cout << "\tpopl\t%eax\n";
+            cout << "\tcmp\t$0, %eax\n";
+            cout << "\tjz\tLOOP" << LL1.top() << "_END\n";
+            stmt->genCode();
         }
         else if (child->varName == "for")
         {
@@ -1330,30 +1330,30 @@ void TreeNode::genCode(ofstream &os)
             if (forhead->nodeType != NODE_KEY)
             {
                 noSib.push(formid);
-                forhead->genCode(os);
+                forhead->genCode();
                 noSib.pop();
             }
-            os << "LOOP" << LL1.top() << "_BGN:\n";
+            cout << "LOOP" << LL1.top() << "_BGN:\n";
             if (formid->nodeType != NODE_KEY)
             {
                 noSib.push(forend);
-                formid->genCode(os);
+                formid->genCode();
                 noSib.pop();
-                os << "\tpopl\t%eax\n";
-                os << "\tcmp\t$0, %eax\n";
-                os << "\tjz\tLOOP" << LL1.top() << "_END\n";
+                cout << "\tpopl\t%eax\n";
+                cout << "\tcmp\t$0, %eax\n";
+                cout << "\tjz\tLOOP" << LL1.top() << "_END\n";
             }
-            stmt->genCode(os);
+            stmt->genCode();
             if (forend->nodeType != NODE_KEY)
             {
                 noSib.push(stmt);
-                os << "LOOP" << LL1.top() << "_COND:\n";
-                forend->genCode(os);
+                cout << "LOOP" << LL1.top() << "_COND:\n";
+                forend->genCode();
                 noSib.pop();
             }
         }
-        os << "\tjmp\tLOOP" << LL1.top() << "_BGN\n";
-        os << "LOOP" << LL1.top() << "_END:\n";
+        cout << "\tjmp\tLOOP" << LL1.top() << "_BGN\n";
+        cout << "LOOP" << LL1.top() << "_END:\n";
         LL1.pop();
     }    
     else if (nodeType == NODE_STMT &&
@@ -1387,23 +1387,23 @@ void TreeNode::genCode(ofstream &os)
     {
         if (inFunc.top()->child->rsib->varName == "main")
         {
-            os << ".END:\n";
-            os << "\tmovl\t%ebp, %esp\n";
-            os << "\tpopl\t%ebp\n";
-            os << "\tmovl\t$0, %eax\n";
-            os << "\tret\n";
+            cout << ".END:\n";
+            cout << "\tmovl\t%ebp, %esp\n";
+            cout << "\tpopl\t%ebp\n";
+            cout << "\tmovl\t$0, %eax\n";
+            cout << "\tret\n";
         }
         else
         {
             if (child != nullptr)
             {
-                child->genCode(os);
+                child->genCode();
                 if (child->nodeType != NODE_FUNC)
-                    os << "\tpopl\t%eax\n";    
+                    cout << "\tpopl\t%eax\n";    
             }
-            os << "\tmovl\t%ebp, %esp\n";
-            os << "\tpopl\t%ebp\n";
-            os << "\tret\n";
+            cout << "\tmovl\t%ebp, %esp\n";
+            cout << "\tpopl\t%ebp\n";
+            cout << "\tret\n";
             param += 4;    // ebp offset
         }      
         if (rsib == nullptr &&
@@ -1416,39 +1416,39 @@ void TreeNode::genCode(ofstream &os)
         if (id2off.find(nodeID) != id2off.end())
         {
             int t = id2off.find(nodeID)->second;
-            os << "\tpushl\t" << (-1) * t;
-            os << "(%ebp)\n"; 
+            cout << "\tpushl\t" << (-1) * t;
+            cout << "(%ebp)\n"; 
         }
         else
-            os << "\tpushl\t" << varName << endl;
+            cout << "\tpushl\t" << varName << endl;
     }
     else
     {
-        if (child != nullptr) child->genCode(os);
+        if (child != nullptr) child->genCode();
     }
     // next stmt
     if (rsib != nullptr &&
         (noSib.empty() || rsib != noSib.top())) 
     {
-        rsib->genCode(os);
+        rsib->genCode();
     }
 }
 
-void TreeNode::genStr(ofstream &os)
+void TreeNode::genStr()
 {
-    os << "\t.text\n";
-    os << "\t.section\t.rodata\n";
-    os << "_CHAR:\n";
-    os << "\t.string\t\"%c\"\n";
-    os << "_INT:\n";
-    os << "\t.string\t\"%d\"\n";
-    os << "_STRING:\n";
-    os << "\t.string\t\"%s\"\n";
+    cout << "\t.text\n";
+    cout << "\t.section\t.rodata\n";
+    cout << "_CHAR:\n";
+    cout << "\t.string\t\"%c\"\n";
+    cout << "_INT:\n";
+    cout << "\t.string\t\"%d\"\n";
+    cout << "_STRING:\n";
+    cout << "\t.string\t\"%s\"\n";
     for (auto &it : id2str)
     {
         TreeNode* node = it.second;
-        os << "_STR_" << node->nodeID << ":\n";
-        os << "\t.string\t\"" << node->sval << "\"" << endl;
+        cout << "_STR_" << node->nodeID << ":\n";
+        cout << "\t.string\t\"" << node->sval << "\"" << endl;
     }
     isMain = false;
 }

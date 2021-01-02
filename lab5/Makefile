@@ -41,6 +41,6 @@ test6:
 	./bin/main.out tests/test_lab6.c > ./out/test_lab6.txt
 
 qxr:
-	./bin/main.out tests/idt.c > ./out/idt.txt
+	./bin/main.out tests/idt.c > ./out/test.s
 	gcc -m32 ./out/test.s -o ./out/test.out
 	qemu-i386 ./out/test.out
